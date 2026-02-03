@@ -1,0 +1,125 @@
+body {
+    background-color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 20px;
+    padding: 20px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.navbar-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-list li a {
+    display: block;
+    color: black;
+    padding: 20px 25px;
+    text-decoration: none;
+}
+
+.login {
+    background-color: #000000;
+    color: white;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 10px 18px;
+}
+
+.main-home {
+    padding-left: 70px;
+}
+
+.main-home-title {
+    font-size: 48px;
+    font-weight: bold;
+    margin-top: 100px;
+}
+
+.main-home-body {
+    font-size: 20px;
+    margin-top: 20px;
+    display: flex;
+    max-width: 800px;
+}
+
+.get-started {
+    background-color: #000000;
+    color: white;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 15px 30px;
+    font-size: 18px;
+    margin-top: 30px;
+}
+
+.guitar-image {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.guitar1 {
+    height: auto;
+    width: 95%;
+    border-radius: 5px;
+}
+
+.features {
+    margin-top: 80px;
+    font-size: 32px;
+    font-weight: bold;
+    padding-left: 70px;
+}
+
+.features-list {
+    display: flex;
+    gap: 80px;
+    justify-content: center;
+}
+
+.feature-item {
+    padding-top: 30px;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.feature-item-photo {
+    border-radius: 5px;
+    display: flex;
+    width: 120%;
+}
+
+.feature-item-title {
+    font-weight: bold;
+    padding-top: 15px;
+}
+
+.feature-item-body {
+    margin-top: 10px;
+    font-size: 16px;
+    max-width: 300px;
+}
