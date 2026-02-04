@@ -1,7 +1,6 @@
 import '../style/HomePage.css'
 import guitar1 from '../images/guitar1.jpg'
 import test from '../images/test.jpg'
-import LoginPage from './LoginPage'
 
 function HomePage() {
   return (
