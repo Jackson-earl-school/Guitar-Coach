@@ -1,6 +1,7 @@
 import '../style/HomePage.css'
 import guitar1 from '../images/guitar1.jpg'
 import test from '../images/test.jpg'
+import LoginPage from './LoginPage'
 
 function HomePage() {
   return (
@@ -24,7 +25,7 @@ function HomePage() {
                 <li> <a href='#'> Coach </a> </li>
                 <li> <a href='#'> Find Songs </a> </li>
                 <li> <a href='#'> Tasks </a> </li>
-                <li> <a href='#'> <button className='login'> Login / Create Account </button> </a> </li>
+                <li> <button onClick={() => { window.location.href = '/login'; }} className='login'> Login / Create Account </button> </li>
               </ul>
             </nav>
           </div>
