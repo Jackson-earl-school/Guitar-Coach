@@ -1,12 +1,9 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-body {
-    background-color: white;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
     font-family: Arial, sans-serif;
+    background-color: white;
 }
 
 .container {
