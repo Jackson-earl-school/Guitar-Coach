@@ -59,9 +59,83 @@ function LoginPage() {
     }
 
     return (
+        <>
+        <html lang='en'>
+            <head>
+                <meta charSet='UTF-8' />
+                <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+                <title> GuitarCoach - Login / Create Account </title>
+            </head>
+
+            <body>
+                <div className="login-page">
+                    <header>
+                        <div className='logo'>
+                            GuitarCoach
+                        </div>
+                    </header>
+
+                    <div className='account-container'>
+                        <div className='create-account-login-title'>
+                            <h1 className="create-account-login-title">
+                                {isSignUp ? 'Create Account' : 'Log In'}
+                            </h1>
+                        </div>
+
+                        <div className='form-container'>
+                            <form onSubmit={handleSubmit} className='create-account'>
+                                {isSignUp && ( // prompt for username only on sign up
+                                    <input
+                                        type="text"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                        minLength={6} // create minimum length for username
+                                    />
+                                )}
+
+                                <input
+                                    type="email"
+                                    placeholder="Email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    minLength={6} // create minimum length for password
+                                />
+                                {error && <p className="error">{error}</p>}
+                                <button type="submit" className='submit-auth'>
+                                    {isSignUp ? 'Sign Up' : 'Log In'}
+                                </button>
+                            </form>
+                        </div>
+
+                        <button type="button" className="toggle-auth" onClick={() => setIsSignUp(!isSignUp)}>
+                            {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
+                        </button>
+                    </div>
+                </div>
+            </body>
+        </html>
+        </>
+        /*
         <div className="login-page">
-            <h1>{isSignUp ? 'Sign Up' : 'Log In'}</h1>
-            <form onSubmit={handleSubmit}>
+            <div className='container'>
+                <div className='logo'>
+                GuitarCoach
+                </div>
+            </div>
+
+            <h1>{isSignUp ? 'Create Account' : 'Log In'}</h1>
+            <form onSubmit={handleSubmit} className='create-account'>
                 {isSignUp && ( // prompt for username only on sign up
                     <input
                         type="text"
@@ -72,7 +146,6 @@ function LoginPage() {
                         minLength={6} // create minimum length for username
                     />
                 )}
-
                 <input
                     type="email"
                     placeholder="Email"
@@ -91,6 +164,7 @@ function LoginPage() {
                 {error && <p className="error">{error}</p>}
                 <button type="submit">{isSignUp ? 'Sign Up' : 'Log In'}</button>
             </form>
+
             <button
                 className="toggle-auth"
                 onClick={() => setIsSignUp(!isSignUp)}
@@ -98,6 +172,7 @@ function LoginPage() {
                 {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
             </button>
         </div>
+        */
     )
 }
 
