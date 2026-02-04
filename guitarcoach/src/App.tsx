@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import { ProtectedRoute } from './protection/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
@@ -10,8 +11,15 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<HomePage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-    </Routes>
+
+      <Route path="/profile" element={ // the profile page should be protected
+        <ProtectedRoute>
+          <ProfilePage />
+        </ProtectedRoute>
+      } />
+
+      
+     </Routes>
   )
 }
 

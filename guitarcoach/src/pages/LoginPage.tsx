@@ -34,10 +34,7 @@ function LoginPage() {
                 return
             }
 
-            const { error: profileError } = await supabase.from("profiles").upsert({
-                id: user.id,
-                username: cleanUsername,
-            })
+            const { error: profileError } = await supabase.from("profiles").update({username: cleanUsername}).eq('id', user.id)
 
             if (profileError) {
                 console.error("Profile upsert failed:", profileError)
