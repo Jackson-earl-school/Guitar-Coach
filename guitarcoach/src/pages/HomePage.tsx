@@ -5,14 +5,6 @@ import test from '../images/test.jpg'
 function HomePage() {
   return (
     <>
-
-    <html lang='en'>
-      <head>
-        <meta charSet='UTF-8' />
-        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-        <title> GuitarCoach - Home </title>
-      </head>
-      <body>
         <header>
           <div className='container'>
             <div className='logo'>
@@ -43,7 +35,7 @@ function HomePage() {
             </div>
 
             <div className='main-home-button'>
-              <button className='get-started'> Get Started </button>
+              <button onClick={() => { window.location.href = '/login'; }} className='get-started'> Get Started </button>
             </div>
           </div>
 
@@ -101,9 +93,6 @@ function HomePage() {
             </div>
           </div>
         </main>
-      </body>
-    </html>
-
     </>
   )
 }
