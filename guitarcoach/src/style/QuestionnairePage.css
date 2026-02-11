@@ -1,8 +1,10 @@
 .questionnaire-page {
     justify-content: center;
+    display: flex;
     align-items: center;
 }
 
-.questionnaire-intro {
+.questionnaire-intro,
+.questionnaire-content {
     text-align: center
 }

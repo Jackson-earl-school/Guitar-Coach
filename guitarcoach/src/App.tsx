@@ -4,8 +4,6 @@ import QuestionnairePage from './pages/Questionnaire'
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
-// import QuestionnairePage from './pages/QuestionnairePage'
-import './style/App.css'
 
 function App() {
   return (
@@ -14,7 +12,7 @@ function App() {
       <Route path="/" element={<HomePage />} />
 
 
-      <Route path="/profile" element={ 
+      <Route path="/profile" element={     // Protected Routes
         <ProtectedRoute>
           <ProfilePage />
         </ProtectedRoute>
@@ -26,7 +24,6 @@ function App() {
         </ProtectedRoute>
       } />
 
-      
      </Routes>
   )
 }

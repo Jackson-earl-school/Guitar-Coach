@@ -41,7 +41,7 @@ async def spotify_login(request: Request):
     return RedirectResponse(f"https://acocunts.spotify.com/authorize?{params}")
 
 @router.get("/callback")
-async def spotify_callback(code: str = None, error: str = None, state: str = None):
+async def spotify_callback(code: str = None, error: str = None, state: str = None): # state = supabase token
 
     if error:
         return RedirectResponse(f"{FRONTEND_URL}/profile?spotify_error={error}")
@@ -66,6 +66,7 @@ async def spotify_callback(code: str = None, error: str = None, state: str = Non
     if response.status_code != 200:
         return RedirectResponse(f"{FRONTEND_URL}/profile?spotify_error=token_exchange_failed")
 
+    # response token type = Bearer
     tokens = response.json()
     access_token = tokens["access_token"]
     refresh_token = tokens["refresh_token"]
