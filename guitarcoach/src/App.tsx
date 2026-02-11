@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from './protection/ProtectedRoute'
+import QuestionnairePage from './pages/Questionnaire'
 import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
@@ -12,9 +13,16 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<HomePage />} />
 
-      <Route path="/profile" element={ // the profile page should be protected
+
+      <Route path="/profile" element={ 
         <ProtectedRoute>
           <ProfilePage />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/questionnaire" element={
+        <ProtectedRoute>
+          <QuestionnairePage />
         </ProtectedRoute>
       } />
 

@@ -15,9 +15,9 @@ function HomePage() {
 
             <nav className='navbar'>
               <ul className='navbar-list'>
-                <li> <a href='#'> Coach </a> </li>
-                <li> <a href='#'> Find Songs </a> </li>
-                <li> <a href='#'> Tasks </a> </li>
+                <li> <a href='/login'> Coach </a> </li>
+                <li> <a href='/login'> Find Songs </a> </li>
+                <li> <a href='/login'> Tasks </a> </li>
                 <li> <button onClick={() => { window.location.href = '/login'; }} className='login'> Login / Create Account </button> </li>
               </ul>
             </nav>

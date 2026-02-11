@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import '../style/LoginPage.css'
 
@@ -50,22 +50,35 @@ function LoginPage() {
             return
         }
 
-        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password })
+        const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({ email, password })
         if (loginError) {
             setError(loginError.message)
             setIsSubmitting(false)
             return
         }
+
+        // Changed to check if a user has completed the quesitonniare yet
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('has_completed_questionnaire')
+          .eq('id', loginData.user?.id)
+          .single()
         
-        navigate("/profile")
+        if (profile?.has_completed_questionnaire){
+          navigate("/profile")
+        } else {
+          navigate("/questionnaire")
+        }
+
     }
 
     return (
         <div className="login-page">
             <header>
-                <div className='logo'>
+                <Link to="/" className='logo' style={{ textDecoration: 'none', color: 'inherit' }}>
                     GuitarCoach
-                </div>
+                </Link>
             </header>
 
             <div className='account-container'>
