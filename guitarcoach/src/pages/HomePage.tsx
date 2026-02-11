@@ -1,6 +1,8 @@
 import '../style/HomePage.css'
-import guitar1 from '../images/guitar1.jpg'
-import test from '../images/test.jpg'
+import home from '../images/home.jpg'
+import features1 from '../images/features1.jpg'
+import features2 from '../images/features2.jpg'
+import features3 from '../images/features3.jpg'
 
 function HomePage() {
   return (
@@ -40,7 +42,7 @@ function HomePage() {
           </div>
 
           <div className='guitar-image'>
-            <img className='guitar1' src={guitar1} alt='Guitar Image'/>
+            <img className='home' src={home} alt='Guitar Image'/>
           </div>
 
           <div className='features-section'>
@@ -51,7 +53,7 @@ function HomePage() {
             <div className='features-list'>
               <div className='feature-item'>
                 <div className='feature-item-photo'>
-                  <img src={test} alt='Feature Item 1'/>
+                  <img src={features1} alt='Feature Item 1'/>
                 </div>
 
                 <div className='feature-item-title'>
@@ -65,7 +67,7 @@ function HomePage() {
 
               <div className='feature-item'>
                 <div className='feature-item-photo'>
-                  <img src={test} alt='Feature Item 2'/>
+                  <img src={features2} alt='Feature Item 2'/>
                 </div>
 
                 <div className='feature-item-title'>
@@ -79,7 +81,7 @@ function HomePage() {
 
               <div className='feature-item'>
                 <div className='feature-item-photo'>
-                  <img src={test} alt='Feature Item 3'/>
+                  <img src={features3} alt='Feature Item 3'/>
                 </div>
 
                 <div className='feature-item-title'>
