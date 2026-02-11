@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from supabase_client import supabase
+from spotify import router as spotify_router
 
 app = FastAPI()
 
@@ -11,6 +12,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(spotify_router)
 
 @app.get("/api/health")
 def health_check():
