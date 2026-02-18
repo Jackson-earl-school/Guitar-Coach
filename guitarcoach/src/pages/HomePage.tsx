@@ -61,7 +61,7 @@ function HomePage() {
                 </div>
 
                 <div className='feature-item-body'>
-                  The quick brown fox jumped over the lazy river. Hello hi hey
+                  I love AI
                 </div>
               </div>
 

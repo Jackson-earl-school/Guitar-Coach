@@ -38,7 +38,7 @@ async def spotify_login(request: Request):
         "state": token,
     })
 
-    return RedirectResponse(f"https://acocunts.spotify.com/authorize?{params}")
+    return RedirectResponse(f"https://accounts.spotify.com/authorize?{params}")
 
 @router.get("/callback")
 async def spotify_callback(code: str = None, error: str = None, state: str = None): # state = supabase token

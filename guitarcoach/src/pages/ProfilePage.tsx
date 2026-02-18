@@ -60,7 +60,7 @@ export default function ProfilePage() {
         const token = sessionData.session?.access_token
         if (token) {
             // redirect to backend
-            window.location.href = `http://localhost:8000/api/spotify/login?token=${token}`
+            window.location.href = `http://127.0.0.1:8000/api/spotify/login?token=${token}`
         }
     }
 
