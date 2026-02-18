@@ -4,17 +4,17 @@
     justify-content: center;
     display: flex;
     align-items: center;
-    min-height: 90vh;
-    background-color: #ffffff;
+    min-height: 100vh;
+    background-color: #b57f50;
     padding: 1rem;
     width: 100%;
 }
 
 .questionnaire-box {
     background: rgb(255, 255, 255);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
+    padding: 8rem;
     max-width: 500px;
     width: 100%;
     text-align: center;
@@ -111,7 +111,7 @@
     padding: 0.75rem 0.75rem;
     border: none;
     border-radius: 8px;
-    background: #4CAF50;
+    background: #4B543B;
     color: white;
     font-size: 1rem;
     cursor: pointer;
@@ -120,10 +120,58 @@
 
 .next-btn:hover:not(:disabled),
 .primary-btn:hover {
-    background: #43a047;
+    background: #8ED081;
 }
 
 .next-btn:disabled {
     background: #ccc;
     cursor: not-allowed;
+}
+
+/* Input Questions */
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.input-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.input-label {
+    flex: 1;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.input-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #e0e0e0;
+    border-radius: 50%;
+    background: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2 ease;
+}
+
+.input-btn:hover {
+    border-color: #999;
+}
+
+.input-btn.selected {
+    border-color: #4CAF50;
+    background: #4CAF50;
+    color: white;
 }
