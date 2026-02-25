@@ -79,9 +79,9 @@
     text-align: center;
 }
 
-.guitar1 {
+.home {
     height: auto;
-    width: 95%;
+    width: 97%;
     border-radius: 5px;
 }
 
@@ -93,12 +93,14 @@
     margin-top: 80px;
     font-size: 32px;
     font-weight: bold;
+    max-width: 400px;
 }
 
 .features-list {
     display: flex;
     gap: 80px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .feature-item {
@@ -111,11 +113,15 @@
     border-radius: 5px;
     display: flex;
     justify-content: center;
+    width: 500px;
+    height: 500px;
+    overflow: hidden;
 }
 
 .feature-item-photo img {
     height: auto;
     width: 100%;
+    object-fit: cover;
 }
 
 .feature-item-title {
@@ -130,6 +136,12 @@
     margin-top: 10px;
     font-size: 16px;
     justify-content: center;
-    width: auto;
-    max-width: 100%;
+    flex-wrap: wrap;
+    max-width: 500px;
+}
+
+.home-footer {
+    background-color: #f8f9fa;
+    padding: 50px 20px;
+    margin-top: 50px;
 }
