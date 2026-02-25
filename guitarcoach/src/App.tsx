@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage.tsx'
 import HomePage from './pages/HomePage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import DashboardPage from './pages/Dashboard.tsx'
+import PracticePlansPage from './pages/PracticePlans.tsx'
 
 function App() {
   return (
@@ -28,6 +29,12 @@ function App() {
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <DashboardPage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/practice-plans" element={
+        <ProtectedRoute>
+          <PracticePlansPage />
         </ProtectedRoute>
       } />
 

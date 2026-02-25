@@ -27,7 +27,7 @@ class PracticePlanRequest(BaseModel):
     song_title: str
     artist: Optional[str] = None
 
-    minutes_per_day: int = 20
+    minutes_per_day: int = 15
     days_per_week: int = 5
     goals: List[str] = Field(default_factory=list)
     struggles: List[str] = Field(default_factory=list)
