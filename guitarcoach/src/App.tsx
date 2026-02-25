@@ -5,6 +5,8 @@ import LoginPage from './pages/LoginPage.tsx'
 import HomePage from './pages/HomePage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import DashboardPage from './pages/Dashboard.tsx'
+import SchedulePage from './pages/SchedulePage.tsx'
+import FindSongs from './pages/FindSongs.tsx'
 
 function App() {
   return (
@@ -28,6 +30,18 @@ function App() {
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <DashboardPage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/schedule" element={
+        <ProtectedRoute>
+          <SchedulePage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/find-songs" element={
+        <ProtectedRoute>
+          <FindSongs />
         </ProtectedRoute>
       } />
 
