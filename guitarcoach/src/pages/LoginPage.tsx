@@ -46,7 +46,7 @@ function LoginPage() {
                 return
             }
 
-            navigate("/profile")
+            navigate("/dashboard")
             return
         }
 
@@ -66,7 +66,7 @@ function LoginPage() {
           .single()
         
         if (profile?.has_completed_questionnaire){
-          navigate("/profile")
+          navigate("/dashboard")
         } else {
           navigate("/questionnaire")
         }

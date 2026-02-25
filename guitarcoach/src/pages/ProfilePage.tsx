@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { supabase } from "../supabaseClient"
+import "../style/LoginPage.css"
 
 export default function ProfilePage() {
     const navigate = useNavigate()
@@ -51,7 +52,9 @@ export default function ProfilePage() {
             console.log("Profile row:", profile)
 
             setUsername(profile.username ?? "")
-            setSpotifyConnected(!!profile.spotify_access_token)
+            if (!searchParams.get("spofity_connected")){
+                setSpotifyConnected(!!profile.spotify_access_token)
+            }
         })()
     }, [navigate])
 
@@ -64,20 +67,6 @@ export default function ProfilePage() {
         }
     }
 
-    // async function disconnectSpotify() {
-    //     const { data: sessionData } = await supabase.auth.getSession()
-    //     const token = sessionData.session?.access_token
-
-    //     await fetch("http://localhost:8000/api/spotify/disconnect", {
-    //         method: "Post",
-    //         headers: {
-    //             "Authorization": `Bearer ${token}`
-    //         }
-    //     })
-    //     setSpotifyConnected(false)
-    // }
-
-
     async function logout() {
         await supabase.auth.signOut()
         navigate("/login")
@@ -88,6 +77,8 @@ export default function ProfilePage() {
         <h1>Profile</h1>
         <p><b>Username:</b> {username}</p>
         <button onClick={logout}>Log out</button>
+
+        <button onClick={() => window.location.href = '/dashboard'}>Back to Dashboard</button>
 
         {spotifyConnected ? (
             <p> Spotify Connected </p>

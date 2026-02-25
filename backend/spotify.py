@@ -83,11 +83,16 @@ async def spotify_callback(code: str = None, error: str = None, state: str = Non
 
 
     # Store tokens in database
-    supabase.table("profiles").update({
-        "spotify_access_token": access_token,
-        "spotify_refresh_token": refresh_token,
-        "spotify_token_expires_at": expires_at.isoformat(),
-    }).eq("id", user_id).execute()
+    try: 
+        result = supabase.table("profiles").update({
+            "spotify_access_token": access_token,
+            "spotify_refresh_token": refresh_token,
+            "spotify_token_expires_at": expires_at.isoformat(),
+        }).eq("id", user_id).execute()
+        print(f"Database update result: {result}")
+    except Exception as e:
+        print(f"Databse udpate error: {e}")
+        return RedirectResponse(f"{FRONTEND_URL}/profile?spotify_error=db_update_failed")
 
     return RedirectResponse(f"{FRONTEND_URL}/profile?spotify_connected=true")
 
@@ -132,26 +137,17 @@ async def get_spotify_profile(request: Request):
     return response.json()
 
 
-# disconnecting a spotify profile
-@router.post("/disconnect")
-async def disconnect_spotify(request: Request):
+# get top tracks
+@router.get("/top-tracks")
+async def get_top_tracks(request: Request):
+    return
 
-    auth_header = request.headers.get("authorization", "")
-    token = auth_header.replace("Bearer ", "")
+# get top artists
+@router.get("/top-artists")
+async def get_top_artists(request: Request):
+    return
 
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
-    try:
-        user_response = supabase.auth.get_user(token)
-        user_id = user_response.user.id
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    supabase.table("profiles").update({
-        "spotify_access_token": None,
-        "spotify_refresh_token": None,
-        "spotify_token_expires_at": None,
-    }).eq("id", user_id).execute()
-
-    return {"status": "disconnected"}
+# get recently played
+@router.get("/recently-played")
+async def get_recently_played(request: Request):
+    return

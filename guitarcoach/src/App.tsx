@@ -1,9 +1,10 @@
 import { Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from './protection/ProtectedRoute'
-import QuestionnairePage from './pages/Questionnaire'
-import LoginPage from './pages/LoginPage'
-import HomePage from './pages/HomePage'
-import ProfilePage from './pages/ProfilePage'
+import QuestionnairePage from './pages/Questionnaire.tsx'
+import LoginPage from './pages/LoginPage.tsx'
+import HomePage from './pages/HomePage.tsx'
+import ProfilePage from './pages/ProfilePage.tsx'
+import DashboardPage from './pages/Dashboard.tsx'
 
 function App() {
   return (
@@ -21,6 +22,12 @@ function App() {
       <Route path="/questionnaire" element={
         <ProtectedRoute>
           <QuestionnairePage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <DashboardPage />
         </ProtectedRoute>
       } />
 
