@@ -75,7 +75,7 @@ function HomePage() {
                 </div> 
 
                 <div className='feature-item-body'>
-                  The quick brown fox jumped over the lazy river. Hello hi hey
+                  The quick brown fox jumped over the lazy river. Hello hi hey lebron james is the best hahahaha testing this if this wraps in the div
                 </div>
               </div>
 
@@ -95,6 +95,14 @@ function HomePage() {
             </div>
           </div>
         </main>
+
+        <footer className="home-footer">
+            <div className="footer-container">
+                <div className="footer-section">
+                    <div className="logo">Guitar Coach</div>
+                </div>
+            </div>
+        </footer>
     </>
   )
 }
