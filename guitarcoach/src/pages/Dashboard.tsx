@@ -9,7 +9,7 @@ function Dashboard() {
         <div className="dashboard-page">
             <header className="dashboard-header">
                 <div className="container">
-                    <div className="logo">
+                    <div className="logo" onClick={() => { window.location.href = '/dashboard'; }}>
                         GuitarCoach
                     </div>
                     <nav className='navbar'>
