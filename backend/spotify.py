@@ -17,7 +17,6 @@ SCOPES ="user-read-recently-played user-top-read user-library-read"
 
 
 async def get_valid_spotify_token(user_id: str) -> str:
-    """Get a valid Spotify token, refreshing if expired."""
 
     # Get tokens from database
     result = supabase.table("profiles").select(
@@ -82,7 +81,7 @@ async def spotify_login(request: Request):
     auth_header = request.headers.get("authorization", "")
     token = auth_header.replace("Bearer ", "")
 
-    # no token in header
+    # fallback for no token in header
     if not token:
         token = request.query_params.get("token", "")
 
@@ -110,7 +109,7 @@ async def spotify_callback(code: str = None, error: str = None, state: str = Non
         return RedirectResponse(f"{FRONTEND_URL}/profile?spotify_error=missing_params")
 
     # Exchange code for tokens
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient() as client:  # create Http client
         response = await client.post(
             "https://accounts.spotify.com/api/token",
             data={
@@ -155,46 +154,6 @@ async def spotify_callback(code: str = None, error: str = None, state: str = Non
         return RedirectResponse(f"{FRONTEND_URL}/profile?spotify_error=db_update_failed")
 
     return RedirectResponse(f"{FRONTEND_URL}/profile?spotify_connected=true")
-
-
-# getting current user's Spotify profile
-@router.get("/me")
-async def get_spotify_profile(request: Request):
-
-    auth_header = request.headers.get("authorization", "")
-    token = auth_header.replace("Bearer ", "")
-
-    if not token:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
-    # Get user
-    try:
-        user_response = supabase.auth.get_user(token)
-        user_id = user_response.user.id
-    except Exception:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    # Get Spotify token from database
-    result = supabase.table("profiles").select(
-        "spotify_access_token"
-    ).eq("id", user_id).single().execute()
-
-    spotify_token = result.data.get("spotify_access_token")
-
-    if not spotify_token:
-        raise HTTPException(status_code=400, detail="Spotify not connected")
-
-    # Fetch Spotify profile
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            "https://api.spotify.com/v1/me",
-            headers={"Authorization": f"Bearer {spotify_token}"}
-        )
-
-    if response.status_code != 200:
-        raise HTTPException(status_code=response.status_code, detail="Spotify API error")
-
-    return response.json()
 
 
 # get top tracks
@@ -297,3 +256,64 @@ async def get_recently_played(request: Request, limit: int = 20):
         raise HTTPException(status_code=response.status_code, detail="Spotify API error")
 
     return response.json()
+
+@router.post("/save-stats")
+async def save_spotify_stats(request: Request):
+    auth_header = request.headers.get("authorization", "")
+    token = auth_header.replace("Bearer ", "")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not Authenticated")
+    
+    try:
+        user_response = supabase.auth.get_user(token)
+        user_id = user_response.user.id
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    spotify_token = await get_valid_spotify_token(user_id)
+
+    if not spotify_token:
+        raise HTTPException(status_code=400, detail="Spotify not connected")
+    
+    # Fetch top tracks and artists
+    async with httpx.AsyncClient() as client:
+        track_res = await client.get(
+            "https://api.spotify.com/v1/me/top/tracks",
+            params={"limit": 10, "time_range": "medium_term"},
+            headers={"Authorization": f"Bearer {spotify_token}"}
+        )
+        artists_res = await client.get(
+            "https://api.spotify.com/v1/me/top/artists",
+            params={"limit": 10, "time_range": "medium_term"},
+            headers={"Authorization": f"Bearer {spotify_token}"}
+        )
+
+    if track_res.status_code != 200 or artists_res.status_code != 200:
+        raise HTTPException(status_code=400, detail="Error getting Spotify data")
+    
+    # Simplify the spotify data
+    tracks_data = track_res.json()
+    artists_data = artists_res.json()
+
+    simplified_tracks = [
+        {
+            "name": track["name"],
+            "artists": ", ".join([artist["name"] for artist in track["artists"]]),
+        }
+        for track in tracks_data.get("items", [])
+    ]
+    
+    simplified_artists = [
+        artist["name"]
+        for artist in artists_data.get("items", [])
+    ]
+
+    # Save to database
+    supabase.table("profiles").update({
+        "top_tracks": simplified_tracks,
+        "top_artists": simplified_artists,
+        "spotify_data_updated_at": datetime.now(timezone.utc).isoformat()
+    }).eq("id", user_id).execute()
+
+    return {"message": "Spotify stats saved", "tracks": len(simplified_tracks), "artists": len(simplified_artists)}

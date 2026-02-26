@@ -78,7 +78,7 @@
 .dashboard-card {
     position: relative;
     padding: 30px;
-    min-height: 150px;
+    min-height: 225px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     overflow: hidden;

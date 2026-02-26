@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import { supabase } from "../supabaseClient"
 import "../style/LoginPage.css"
 
+const API_BASE = "http://127.0.0.1:8000"
+
 export default function ProfilePage() {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
@@ -18,7 +20,6 @@ export default function ProfilePage() {
         if (searchParams.get("spotify_error")){
             console.error("Spotify error:", searchParams.get("spotify_error"))
         }
-        
 
         ;(async () => {
             const { data: sessionData } = await supabase.auth.getSession()
@@ -49,21 +50,18 @@ export default function ProfilePage() {
                 return
             }
 
-            console.log("Profile row:", profile)
-
             setUsername(profile.username ?? "")
-            if (!searchParams.get("spofity_connected")){
+            if (!searchParams.get("spotify_connected")){
                 setSpotifyConnected(!!profile.spotify_access_token)
             }
         })()
-    }, [navigate])
+    }, [navigate, searchParams])
 
     async function connectSpotify() {
         const { data: sessionData } = await supabase.auth.getSession()
         const token = sessionData.session?.access_token
         if (token) {
-            // redirect to backend
-            window.location.href = `http://127.0.0.1:8000/api/spotify/login?token=${token}`
+            window.location.href = `${API_BASE}/api/spotify/login?token=${token}`
         }
     }
 
@@ -74,18 +72,19 @@ export default function ProfilePage() {
 
     return (
         <div>
-        <h1>Profile</h1>
-        <p><b>Username:</b> {username}</p>
-        <button onClick={logout}>Log out</button>
+            <h1>Profile</h1>
+            <p><b>Username:</b> {username}</p>
+            <button onClick={logout}>Log out</button>
 
-        <button onClick={() => window.location.href = '/dashboard'}>Back to Dashboard</button>
+            <button onClick={() => window.location.href = '/dashboard'}>Back to Dashboard</button>
 
-        {spotifyConnected ? (
-            <p> Spotify Connected </p>
-        ) : (
-            <button onClick={connectSpotify}>Connect Spotify</button>
-        )}
-
+            {spotifyConnected ? (
+                <>
+                    <p>Spotify Connected</p>
+                </>
+            ) : (
+                <button onClick={connectSpotify}>Connect Spotify</button>
+            )}
         </div>
     )
 }

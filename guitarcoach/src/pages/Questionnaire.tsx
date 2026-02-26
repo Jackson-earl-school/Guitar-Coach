@@ -43,7 +43,7 @@ const questions = [
     {
     id: 'preference',
     question: 'What styles are you most interested in?',
-    options: ['Rock', 'Pop', 'Blues', 'Jazz', 'Metal', 'Acoustic / Folk', 'R&B / Neo-soul'],
+    options: ['Rock', 'Pop', 'Blues', 'Jazz', 'Metal', 'Acoustic / Folk', 'R&B / Neo-soul', 'Indie'],
     type: 'multi'
     },
     {
@@ -178,12 +178,34 @@ function QuestionnairePage () {
     }
     
     async function handleComplete() {
+        // Save answers
+        let answer: string | string[] | Record<string, number> = ''
+        switch (currentQuestion.type) {
+            case 'single':
+                answer = selectedOption!
+                break
+            case 'multi':
+                answer = selectedOptions
+                break
+            case 'input':
+                answer = inputs
+                break
+        }
+
+        const finalAnswers = {
+            ...answers,
+            [currentQuestion.id]: answer
+        }
+
         // Mark questionnaire as completed
         const { data: userData } = await supabase.auth.getUser()
         if (userData.user) {
             await supabase
                 .from('profiles')
-                .update({ has_completed_questionnaire: true })
+                .update({ 
+                    has_completed_questionnaire: true,
+                    questionnaire_answers: finalAnswers  // stored as a json
+                 })
                 .eq('id', userData.user.id)
         }
 
@@ -191,7 +213,7 @@ function QuestionnairePage () {
         setCompleted(true)
 
         setTimeout(() => {
-            navigate('/profile')
+            navigate('/dashboard')
         }, 3000)
     }
 
@@ -217,7 +239,7 @@ function QuestionnairePage () {
                 <div className="questionnaire-box">
                     <h1>Thank you!</h1>
                     <p>Thanks for filling out the quesitonniare</p>
-                    <p>Taking you to your profile page now...</p>
+                    <p>Taking you to your dashboard now...</p>
                 </div>
             </div>
         )

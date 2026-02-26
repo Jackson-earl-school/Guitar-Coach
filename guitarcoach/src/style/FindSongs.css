@@ -22,6 +22,7 @@
 .dashboard-header .logo {
     font-size: 15px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .dashboard-header .navbar-list {
@@ -58,21 +59,21 @@
 .find-songs-main {
     flex: 1;
     background-color: #9cb99c;
-    padding: 40px 80px;
+    padding: 40px 50px;
 }
 
 .page-title {
-    font-size: 36px;
+    font-size: 32px;
     font-weight: bold;
     color: #000;
-    margin: 0 0 30px 0;
+    margin: 0 0 25px 0;
 }
 
 /* Time Range Selector */
 .time-range-selector {
     display: flex;
     gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .time-range-selector button {
@@ -106,57 +107,70 @@
     color: #c00;
 }
 
-/* Spotify Sections */
-.spotify-sections {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+/* Main Content Layout - 3 Columns */
+.content-layout {
+    display: flex;
     gap: 30px;
+    align-items: flex-start;
 }
 
-.spotify-section {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* Left Column - Tracks */
+.tracks-column {
+    width: 220px;
+    flex-shrink: 0;
 }
 
-.spotify-section h2 {
-    font-size: 20px;
-    margin: 0 0 20px 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #B57F50;
+.tracks-column h2,
+.artists-column h2 {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 12px 0;
+    color: #000;
 }
 
-/* Tracks List */
+/* Right Column - Artists */
+.artists-column {
+    width: 220px;
+    flex-shrink: 0;
+}
+
+/* Tracks and Artists Lists */
 .tracks-list, .artists-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
 }
 
 .track-item, .artist-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px;
-    border-radius: 8px;
-    transition: background-color 0.2s;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 25px;
+    background-color: #d9d9d9;
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 42px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .track-item:hover, .artist-item:hover {
-    background-color: #f5f5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
 }
 
 .track-number {
     font-weight: bold;
-    color: #888;
-    min-width: 24px;
+    color: #666;
+    min-width: 16px;
+    font-size: 12px;
     text-align: center;
 }
 
 .track-image, .artist-image {
-    width: 48px;
-    height: 48px;
+    width: 30px;
+    height: 30px;
     border-radius: 4px;
     object-fit: cover;
 }
@@ -170,20 +184,226 @@
     flex-direction: column;
     gap: 2px;
     overflow: hidden;
+    flex: 1;
+    min-width: 0;
 }
 
 .track-name, .artist-name {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #000;
+}
+
+.track-artist {
+    font-size: 10px;
+    color: #555;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.track-artist, .artist-genres {
+/* Middle Column - Recommendations */
+.recommendation-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 3px solid #B57F50;
+    border-radius: 12px;
+    padding: 30px 25px;
+    min-height: 500px;
+}
+
+.generate-btn {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.generate-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.difficulty-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.difficulty-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    background-color: #fff;
+    border: 2px solid #000;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.difficulty-btn:hover {
+    background-color: #f0f0f0;
+}
+
+/* Recommended Song Display */
+.recommended-song-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-top: 10px;
+}
+
+.recommended-song {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #d9d9d9;
+    padding: 15px 25px;
+    border-radius: 8px;
+    border: 2px solid #000;
+    min-width: 280px;
+}
+
+.play-button {
+    width: 45px;
+    height: 45px;
+    background-color: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.play-icon {
+    font-size: 20px;
+    color: #c00;
+    margin-left: 3px;
+}
+
+.song-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #000;
+}
+
+.artist-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+}
+
+.recommended-artist-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #000;
+}
+
+.artist-text h3 {
+    font-size: 18px;
+    margin: 0 0 5px 0;
+    font-weight: normal;
+}
+
+.artist-text p {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Star Rating */
+.star-rating {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.star {
+    font-size: 32px;
+    color: #ccc;
+}
+
+.star.filled {
+    color: #d4a843;
+}
+
+/* Info Boxes */
+.info-boxes {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.info-box {
+    background-color: #d9d9d9;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 200px;
+    min-height: 150px;
+}
+
+.info-box h3 {
+    font-size: 16px;
+    margin: 0 0 15px 0;
+    font-weight: normal;
+}
+
+.info-box p {
+    font-size: 14px;
+    margin: 8px 0;
+    color: #333;
+}
+
+/* Empty Recommendation State */
+.empty-recommendation {
+    background-color: #d9d9d9;
+    padding: 40px 30px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 20px;
+    max-width: 400px;
+}
+
+.empty-recommendation p {
+    font-size: 16px;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Disabled States */
+.generate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.play-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.play-button:not(.disabled) {
+    cursor: pointer;
+}
+
+.play-button:not(.disabled):hover {
+    background-color: #f0f0f0;
+}
+
+.no-preview {
     font-size: 12px;
     color: #666;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-style: italic;
+    margin: 5px 0;
 }
