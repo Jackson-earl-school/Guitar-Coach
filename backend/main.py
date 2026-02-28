@@ -2,6 +2,10 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from supabase_client import supabase
 from spotify import router as spotify_router
+from recommendation import router as recommendation_router
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -13,6 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(recommendation_router)
 app.include_router(spotify_router)
 
 @app.get("/api/health")

@@ -16,6 +16,8 @@ FRONTEND_URL = os.environ["FRONTEND_URL"]
 SCOPES ="user-read-recently-played user-top-read user-library-read"
 
 
+###########################     Spotify Login Functions       ########################### 
+
 async def get_valid_spotify_token(user_id: str) -> str:
 
     # Get tokens from database
@@ -156,7 +158,8 @@ async def spotify_callback(code: str = None, error: str = None, state: str = Non
     return RedirectResponse(f"{FRONTEND_URL}/profile?spotify_connected=true")
 
 
-# get top tracks
+###########################     Spotify Service Functions       ########################### 
+
 @router.get("/top-tracks")
 async def get_top_tracks(request: Request, limit: int = 20, time_range: str = "medium_term"):
     auth_header = request.headers.get("authorization", "")
@@ -257,8 +260,9 @@ async def get_recently_played(request: Request, limit: int = 20):
 
     return response.json()
 
+# Saving the spotify stats to supabase for later use
 @router.post("/save-stats")
-async def save_spotify_stats(request: Request):
+async def save_spotify_stats(request: Request, time_range: str = "medium_term"):
     auth_header = request.headers.get("authorization", "")
     token = auth_header.replace("Bearer ", "")
 
@@ -280,12 +284,12 @@ async def save_spotify_stats(request: Request):
     async with httpx.AsyncClient() as client:
         track_res = await client.get(
             "https://api.spotify.com/v1/me/top/tracks",
-            params={"limit": 10, "time_range": "medium_term"},
+            params={"limit": 10, "time_range": time_range},
             headers={"Authorization": f"Bearer {spotify_token}"}
         )
         artists_res = await client.get(
             "https://api.spotify.com/v1/me/top/artists",
-            params={"limit": 10, "time_range": "medium_term"},
+            params={"limit": 10, "time_range": time_range},
             headers={"Authorization": f"Bearer {spotify_token}"}
         )
 
@@ -317,3 +321,5 @@ async def save_spotify_stats(request: Request):
     }).eq("id", user_id).execute()
 
     return {"message": "Spotify stats saved", "tracks": len(simplified_tracks), "artists": len(simplified_artists)}
+
+    
