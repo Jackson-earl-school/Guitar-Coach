@@ -3,6 +3,7 @@ import guitar1 from "../images/guitar1.jpg"
 import home1 from "../images/home.jpg"
 import features2 from "../images/features2.jpg"
 import features3 from "../images/features3.jpg"
+import { Link } from "react-router-dom"
 
 function Dashboard() {
     return (
@@ -15,7 +16,7 @@ function Dashboard() {
                     <nav className='navbar'>
                         <ul className='navbar-list'>
                             <li><a href='/'>Coach</a></li>
-                            <li><a href='/'>Find Songs</a></li>
+                            <li><a href='/find-songs'>Find Songs</a></li>
                             <li><a href='/'>Tasks</a></li>
                             <li>
                                 <button onClick={() => { window.location.href = '/profile'; }} className="profile-button">
@@ -59,6 +60,18 @@ function Dashboard() {
                     </div>
                 </div>
             </main>
+
+            <footer className="dashboard-footer">
+                <div className="footer-container">
+                    <div className="footer-section">
+                        <div>
+                            <Link to="/" className='logo'>
+                                GuitarCoach
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     )
 }

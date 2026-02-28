@@ -148,3 +148,8 @@
     padding-bottom: 10px;
     border-bottom: 2px solid #B57F50;
 }
+
+.dashboard-footer {
+    background-color: white;
+    padding: 50px 20px;
+}

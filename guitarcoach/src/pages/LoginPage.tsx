@@ -75,108 +75,78 @@ function LoginPage() {
 
     return (
         <div className="login-page">
-            <header>
-                <Link to="/" className='logo' style={{ textDecoration: 'none', color: 'inherit' }}>
-                    GuitarCoach
-                </Link>
+            <header className="login-header">
+                <div className='container'>
+                    <div className='logo'>
+                        <Link to="/" className='logo'>
+                            GuitarCoach
+                        </Link>
+                    </div>
+                </div>
             </header>
 
-            <div className='account-container'>
-                <div className='create-account-login-title'>
-                    <h1 className="create-account-login-title">
-                        {isSignUp ? 'Create Account' : 'Log In'}
-                    </h1>
-                </div>
+            <main>
+                <div className='account-container'>
+                    <div className='create-account-login-title'>
+                        <h1 className="create-account-login-title">
+                            {isSignUp ? 'Create Account' : 'Log In'}
+                        </h1>
+                    </div>
 
-                <div className='form-container'>
-                    <form onSubmit={handleSubmit} className='create-account'>
-                        {isSignUp && ( // prompt for username only on sign up
+                    <div className='form-container'>
+                        <form onSubmit={handleSubmit} className='create-account'>
+                            {isSignUp && ( // prompt for username only on sign up
+                                <input
+                                    type="text"
+                                    placeholder="Username"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    required
+                                    minLength={6} // create minimum length for username
+                                />
+                            )}
+
                             <input
-                                type="text"
-                                placeholder="Username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                type="email"
+                                placeholder="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
-                                minLength={6} // create minimum length for username
                             />
-                        )}
 
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+                            <input
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                minLength={6} // create minimum length for password
+                            />
+                            {error && <p className="error">{error}</p>}
+                            <button type="submit" className='submit-auth' disabled={isSubmitting}>
+                                {isSubmitting ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Log In')}
+                            </button>
+                        </form>
 
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            minLength={6} // create minimum length for password
-                        />
-                        {error && <p className="error">{error}</p>}
-                        <button type="submit" className='submit-auth' disabled={isSubmitting}>
-                            {isSubmitting ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Log In')}
+                        <button type="button" className="toggle-auth" onClick={() => setIsSignUp(!isSignUp)}>
+                            {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
                         </button>
-                    </form>
+                    </div>
                 </div>
+            </main>
 
-                <button type="button" className="toggle-auth" onClick={() => setIsSignUp(!isSignUp)}>
-                    {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
-                </button>
-            </div>
-        </div>
-  
-        /*
-        <div className="login-page">
-            <div className='container'>
-                <div className='logo'>
-                GuitarCoach
+            <footer className="login-footer">
+                <div className="footer-container">
+                    <div className="footer-section">
+                        <div>
+                            <Link to="/" className='logo'>
+                                GuitarCoach
+                            </Link>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <h1>{isSignUp ? 'Create Account' : 'Log In'}</h1>
-            <form onSubmit={handleSubmit} className='create-account'>
-                {isSignUp && ( // prompt for username only on sign up
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        minLength={6} // create minimum length for username
-                    />
-                )}
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6} // create minimum length for password
-                />
-                {error && <p className="error">{error}</p>}
-                <button type="submit">{isSignUp ? 'Sign Up' : 'Log In'}</button>
-            </form>
-
-            <button
-                className="toggle-auth"
-                onClick={() => setIsSignUp(!isSignUp)}
-            >
-                {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
-            </button>
+            </footer>
         </div>
-        */
     )
 }
 
