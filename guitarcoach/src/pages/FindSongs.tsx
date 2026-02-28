@@ -422,7 +422,8 @@ export default function FindSongs() {
                                 </>
                             ) : (
                                 <div className="empty-recommendation">
-                                    <p>Click "Generate new song" to get a personalized recommendation based on your listening history!</p>
+                                    <p>Click "Generate new song" to get a personalized recommendation based on your listening history! </p>
+                                    <p>You can also click on one of your listed artists or songs and get an even more specified recommendation</p>
                                 </div>
                             )}
                         </section>
