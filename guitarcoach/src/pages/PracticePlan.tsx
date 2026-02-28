@@ -12,10 +12,7 @@ type PracticePlan = {
 export default function PracticePlanPage() {
   const [songTitle, setSongTitle] = useState("")
   const [artist, setArtist] = useState("")
-  const [goals, setGoals] = useState("")
-  const [struggles, setStruggles] = useState("")
   const [minutesPerDay, setMinutesPerDay] = useState(15)
-  const [daysPerWeek, setDaysPerWeek] = useState(5)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -39,9 +36,6 @@ export default function PracticePlanPage() {
       song_title: songTitle.trim(),
       artist: artist.trim() || null,
       minutes_per_day: minutesPerDay,
-      days_per_week: daysPerWeek,
-      goals: goals.split(",").map(s => s.trim()).filter(Boolean),
-      struggles: struggles.split(",").map(s => s.trim()).filter(Boolean),
       // skill_level optional for now
     }
 
@@ -84,16 +78,6 @@ export default function PracticePlanPage() {
           value={artist}
           onChange={(e) => setArtist(e.target.value)}
         />
-        <input
-          placeholder="Goals"
-          value={goals}
-          onChange={(e) => setGoals(e.target.value)}
-        />
-        <input
-          placeholder="Struggles"
-          value={struggles}
-          onChange={(e) => setStruggles(e.target.value)}
-        />
 
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <label>
@@ -102,16 +86,6 @@ export default function PracticePlanPage() {
               type="number"
               value={minutesPerDay}
               onChange={(e) => setMinutesPerDay(Number(e.target.value))}
-              style={{ width: 50 }}
-            />
-          </label>
-
-          <label>
-            Days/week{" "}
-            <input
-              type="number"
-              value={daysPerWeek}
-              onChange={(e) => setDaysPerWeek(Number(e.target.value))}
               style={{ width: 50 }}
             />
           </label>
