@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import { supabase } from "../supabaseClient"
 import "../style/FindSongs.css"
 
@@ -17,7 +17,7 @@ interface RecommendedSong {
     name: string
     artist: string
     artistImage: string | null
-    previewUrl: string | null
+    spotifyId: string | null
     difficulty: number
     skills: string[]
     description: string
@@ -34,18 +34,34 @@ export default function FindSongs() {
     const [topTracks, setTopTracks] = useState<SpotifyTrack[]>([])
     const [topArtists, setTopArtists] = useState<SpotifyArtist[]>([])
     const [loading, setLoading] = useState(true)
+    const [showHistory, setShowHistory] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [timeRange, setTimeRange] = useState("medium_term")
     const [recommendedSong, setRecommendedSong] = useState<RecommendedSong | null>(null)
-    const [isPlaying, setIsPlaying] = useState(false)
     const [isGenerating, setIsGenerating] = useState(false)
-    const audioRef = useRef<HTMLAudioElement | null>(null)
+
+    const [previousSongs, setPreviousSongs] = useState<string[]>(() => {
+        const saved = localStorage.getItem("previousSongs")
+        return saved ? JSON.parse(saved) : []
+    })
+
+    const [selectedItem, setSelectedItem] = useState<{
+        type: "track" | "artist"
+        name: string
+        artist?: string     // only for tracks
+    } | null>(null)
+
+
 
     const API_BASE = "http://127.0.0.1:8000"
 
     useEffect(() => {
         fetchSpotifyData()
     }, [timeRange])
+
+    useEffect(() => {
+        localStorage.setItem("previousSongs", JSON.stringify(previousSongs))
+    }, [previousSongs])
 
     async function fetchSpotifyData() {
         setLoading(true)
@@ -89,7 +105,7 @@ export default function FindSongs() {
             setTopTracks(tracksData.items || [])
             setTopArtists(artistsData.items || [])
 
-            saveSpotifyStats(token)
+            saveSpotifyStats(token, timeRange)
         } catch (err) {
             setError("Error fetching Spotify data")
             console.error(err)
@@ -98,9 +114,9 @@ export default function FindSongs() {
         setLoading(false)
     }
 
-    async function saveSpotifyStats(token: string) {
+    async function saveSpotifyStats(token: string, timeRange: string) {
         try {
-            await fetch(`${API_BASE}/api/spotify/save-stats`, {
+            await fetch(`${API_BASE}/api/spotify/save-stats?time_range=${timeRange}`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -110,78 +126,86 @@ export default function FindSongs() {
         }
     }
 
-    function generateRecommendation() {
-        if (topTracks.length === 0) return
+    async function generateRecommendation(
+        adjust_difficulty: "up" | "down" | null = null,
+        similarTo?: {type: "track" | "artist", name: string, artistName?: string }
+    ) {
+        if (topTracks.length == 0) return
 
+        setSelectedItem(null)
         setIsGenerating(true)
 
-        // Stop any currently playing audio
-        if (audioRef.current) {
-            audioRef.current.pause()
-            setIsPlaying(false)
-        }
+        const { data: sessionData } = await supabase.auth.getSession()
+        const token = sessionData.session?.access_token
 
-        // For now, pick a random track from top tracks
-        // Later this will be replaced with ChatGPT recommendations
-        const randomTrack = topTracks[Math.floor(Math.random() * topTracks.length)]
-
-        // Try to find the artist in topArtists to get their image
-        const artistName = randomTrack.artists?.[0]?.name || ""
-        const matchingArtist = topArtists.find(a => a.name === artistName)
-        const artistImage = matchingArtist?.images?.[0]?.url ||
-                           matchingArtist?.images?.[1]?.url ||
-                           randomTrack.album?.images?.[0]?.url || null
-
-        // Placeholder skills and description - will be replaced with ChatGPT
-        const skills = ["strumming", "chord transitions", "fingerpicking"]
-        const descriptions = [
-            "This song matches your taste and will help improve your technique.",
-            "Based on your listening history, this track offers a good challenge.",
-            "A great song to practice rhythm and timing skills."
-        ]
-
-        setTimeout(() => {
-            setRecommendedSong({
-                name: randomTrack.name,
-                artist: randomTrack.artists?.map(a => a.name).join(", ") || "Unknown",
-                artistImage: artistImage,
-                previewUrl: randomTrack.preview_url || null,
-                difficulty: 3,
-                skills: skills.slice(0, Math.floor(Math.random() * 2) + 2),
-                description: descriptions[Math.floor(Math.random() * descriptions.length)]
-            })
+        if (!token) {
+            setError("Not authenticated")
             setIsGenerating(false)
-        }, 500) // Small delay for UX
+            return
+        }
+
+        try {
+            // call openapi endpoint
+            const endpoint = similarTo
+                ? `${API_BASE}/api/recommendation/generate-similar`
+                : `${API_BASE}/api/recommendation/generate-song`
+
+            const body = similarTo
+                ? {
+                    type: similarTo.type,
+                    name: similarTo.name,
+                    artist_name: similarTo.artistName || null,
+                    current_difficulty: recommendedSong?.difficulty || (Math.floor(Math.random() * 5) + 1),
+                    previous_songs: previousSongs 
+                }
+                : {
+                    top_tracks: topTracks,
+                    top_artists: topArtists,
+                    current_difficulty: recommendedSong?.difficulty || (Math.floor(Math.random() * 5) + 1),
+                    adjust_difficulty: adjust_difficulty,
+                    previous_songs: previousSongs
+                }
+
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            })
+            const recommendation = await response.json()
+
+            // store song so it doesn't get repeated
+            setPreviousSongs(prev => [...prev, `${recommendation.name} by ${recommendation.artist}`])
+
+            // search spotify for preview
+            const spotifyRes = await fetch(
+                `${API_BASE}/api/recommendation/search-spotify?song_name=${encodeURIComponent(recommendation.name)}&artist_name=${encodeURIComponent(recommendation.artist)}`,
+                {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}`}
+                }
+            )
+            const spotifyData = await spotifyRes.json()
+            console.log("spotifyData:", spotifyData)
+
+            setRecommendedSong({
+                name: recommendation.name,
+                artist: recommendation.artist,
+                artistImage: spotifyData.album_image,
+                spotifyId: spotifyData.spotify_id,
+                difficulty: recommendation.difficulty,
+                skills: recommendation.skills,
+                description: recommendation.description
+            })
+        } catch (error) {
+            console.error("Recommendation error:", error)
+            setError("Failed to generate recommendation")
+
+        }
+        setIsGenerating(false)
     }
-
-    function togglePlayback() {
-        if (!recommendedSong?.previewUrl) return
-
-        if (!audioRef.current) {
-            audioRef.current = new Audio(recommendedSong.previewUrl)
-            audioRef.current.onended = () => setIsPlaying(false)
-        }
-
-        if (isPlaying) {
-            audioRef.current.pause()
-            setIsPlaying(false)
-        } else {
-            audioRef.current.play()
-            setIsPlaying(true)
-        }
-    }
-
-    // Update audio source when recommendation changes
-    useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.pause()
-            setIsPlaying(false)
-        }
-        if (recommendedSong?.previewUrl) {
-            audioRef.current = new Audio(recommendedSong.previewUrl)
-            audioRef.current.onended = () => setIsPlaying(false)
-        }
-    }, [recommendedSong])
 
     return (
         <div className="dashboard-page">
@@ -209,25 +233,60 @@ export default function FindSongs() {
                 <h1 className="page-title">Find Songs</h1>
 
                 <div className="time-range-selector">
+                    <div className="time-range-buttons">
+                        <button
+                            className={timeRange === "short_term" ? "active" : ""}
+                            onClick={() => setTimeRange("short_term")}
+                        >
+                            Last 4 Weeks
+                        </button>
+                        <button
+                            className={timeRange === "medium_term" ? "active" : ""}
+                            onClick={() => setTimeRange("medium_term")}
+                        >
+                            Last 6 Months
+                        </button>
+                        <button
+                            className={timeRange === "long_term" ? "active" : ""}
+                            onClick={() => setTimeRange("long_term")}
+                        >
+                            All Time
+                        </button>
+                    </div>
+
                     <button
-                        className={timeRange === "short_term" ? "active" : ""}
-                        onClick={() => setTimeRange("short_term")}
+                        className="history-btn"
+                        onClick={() => setShowHistory(!showHistory)}
                     >
-                        Last 4 Weeks
+                        {showHistory ? "Hide history" : "View recommendation history"}
                     </button>
-                    <button
-                        className={timeRange === "medium_term" ? "active" : ""}
-                        onClick={() => setTimeRange("medium_term")}
-                    >
-                        Last 6 Months
-                    </button>
-                    <button
-                        className={timeRange === "long_term" ? "active" : ""}
-                        onClick={() => setTimeRange("long_term")}
-                    >
-                        All Time
-                    </button>
+                    {showHistory && (
+                        <div className="history-panel">
+                            <div className="history-header">
+                                <h3>Recommendation History    </h3>
+                                <button 
+                                    className="clear-history-btn"
+                                    onClick={() => {
+                                        setPreviousSongs([])
+                                        setShowHistory(false)
+                                    }}
+                                >
+                                    Clear all
+                                </button>
+                            </div>
+                            {previousSongs.length === 0 ? (
+                                <p className="history-empty">No recommendation yet</p>
+                            ) : (
+                                <ul className="history-list">
+                                    {previousSongs.map((song, index) => (
+                                        <li key={index} className="history-item">{song}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    )}
                 </div>
+                
 
                 {loading && <p className="loading">Loading your Spotify data...</p>}
                 {error && <p className="error">{error}</p>}
@@ -239,21 +298,48 @@ export default function FindSongs() {
                             <h2>Your Top Tracks</h2>
                             <div className="tracks-list">
                                 {topTracks.map((track, index) => (
-                                    <div key={track.id || index} className="track-item">
-                                        <span className="track-number">{index + 1}</span>
-                                        {track.album?.images?.length > 0 && (
-                                            <img
-                                                src={track.album.images[2]?.url || track.album.images[0]?.url}
-                                                alt={track.album?.name || "Album"}
-                                                className="track-image"
-                                            />
-                                        )}
-                                        <div className="track-info">
-                                            <span className="track-name">{track.name}</span>
-                                            <span className="track-artist">
-                                                {track.artists?.map(a => a.name).join(", ") || "Unknown"}
-                                            </span>
+                                    <div key={track.id || index} className="track-item-wrapper">
+                                        <div 
+                                            className="track-item" 
+                                            onClick={() => setSelectedItem( 
+                                                selectedItem?.type === "track" && selectedItem?.name === track.name 
+                                                ? null 
+                                                : {type: "track", name: track.name, artist: track.artists?.map(a => a.name).join(", ")}
+                                            )}
+                                        >
+                                            <span className="track-number">{index + 1}</span>
+                                            {track.album?.images?.length > 0 && (
+                                                <img
+                                                    src={track.album.images[2]?.url || track.album.images[0]?.url}
+                                                    alt={track.album?.name || "Album"}
+                                                    className="track-image"
+                                                />
+                                            )}
+                                            <div className="track-info">
+                                                <span className="track-name">{track.name}</span>
+                                                <span className="track-artist">
+                                                    {track.artists?.map(a => a.name).join(", ") || "Unknown"}
+                                                </span>
+                                            </div>
                                         </div>
+                                        {/* Popp for this track */}
+                                        {selectedItem?.type === "track" && selectedItem?.name === track.name && (
+                                            <div className="similar-popup">
+                                                <p>Generate similar song?</p>
+                                                <button 
+                                                    className="popup-yes-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        generateRecommendation(null, {
+                                                            type: "track",
+                                                            name: track.name,
+                                                            artistName: track.artists?.[0]?.name
+                                                        })
+                                                    }}>
+                                                    Yes
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -263,59 +349,62 @@ export default function FindSongs() {
                         <section className="recommendation-column">
                             <button
                                 className="generate-btn"
-                                onClick={generateRecommendation}
+                                onClick={() => generateRecommendation(null)}
                                 disabled={isGenerating || topTracks.length === 0}
                             >
-                                {isGenerating ? "Generating..." : "Generate new song"}
+                                {isGenerating ? "Generating..." : "Generate random new song"}
                             </button>
 
                             {recommendedSong ? (
                                 <>
-                                    <div className="difficulty-buttons">
-                                        <button className="difficulty-btn" onClick={generateRecommendation}>difficulty up</button>
-                                        <button className="difficulty-btn" onClick={generateRecommendation}>difficulty down</button>
-                                    </div>
 
-                                    <div className="recommended-song-container">
-                                        <div className="recommended-song">
-                                            <div
-                                                className={`play-button ${!recommendedSong.previewUrl ? 'disabled' : ''}`}
-                                                onClick={togglePlayback}
-                                            >
-                                                <span className="play-icon">{isPlaying ? "⏸" : "▶"}</span>
-                                            </div>
-                                            <span className="song-title">{recommendedSong.name}</span>
-                                        </div>
-
-                                        <div className="artist-display">
-                                            {recommendedSong.artistImage && (
-                                                <img
-                                                    src={recommendedSong.artistImage}
-                                                    alt={recommendedSong.artist}
-                                                    className="recommended-artist-image"
-                                                />
-                                            )}
-                                            <div className="artist-text">
-                                                <h3><u>Artist:</u></h3>
-                                                <p>{recommendedSong.artist}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {!recommendedSong.previewUrl && (
-                                        <p className="no-preview">No preview available for this track</p>
+                                <div className="player-difficulty-row">
+                                    {/* Spotify Embed Player */}
+                                    {recommendedSong.spotifyId && (
+                                        <iframe
+                                            src={`https://open.spotify.com/embed/track/${recommendedSong.spotifyId}?utm_source=generator&theme=1&size=large`}
+                                            height="152"
+                                            width="100%"
+                                            style={{ borderRadius: "12px", minWidth: "400px", border: "none"}}
+                                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                            loading="lazy"
+                                        />
                                     )}
 
-                                    <div className="star-rating">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <span
-                                                key={star}
-                                                className={`star ${star <= recommendedSong.difficulty ? 'filled' : ''}`}
+                                    <div className="difficulty-section">
+                                        <h3 className="difficulty-header"> Adjust Difficulty</h3>
+                                        <div className="difficulty-controls">
+                                            <button
+                                                className="difficulty-arrow-btn"
+                                                onClick={() => generateRecommendation("down")}
+                                                disabled={isGenerating || (recommendedSong?.difficulty || 0) <= 1}
                                             >
-                                                ★
-                                            </span>
-                                        ))}
+                                                ◀
+                                            </button>
+
+                                            <div className="star-rating">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <span
+                                                        key={star}
+                                                        className={`star ${star <= recommendedSong.difficulty ? 'filled' : ''}`}
+                                                    >
+                                                        ★
+                                                    </span>
+                                                ))}
+                                            </div>
+
+                                            <button
+                                                className="difficulty-arrow-btn"
+                                                onClick={() => generateRecommendation("up")}
+                                                disabled={isGenerating || (recommendedSong?.difficulty || 0) >= 5}
+                                            >
+                                                ▶
+                                            </button>
+                                        </div>
                                     </div>
+
+                                </div>
+                                
 
                                     <div className="info-boxes">
                                         <div className="info-box">
@@ -343,18 +432,45 @@ export default function FindSongs() {
                             <h2>Your Top Artists</h2>
                             <div className="artists-list">
                                 {topArtists.map((artist, index) => (
-                                    <div key={artist.id || index} className="artist-item">
-                                        <span className="track-number">{index + 1}</span>
-                                        {artist.images?.length > 0 && (
-                                            <img
-                                                src={artist.images[2]?.url || artist.images[0]?.url}
-                                                alt={artist.name}
-                                                className="artist-image"
-                                            />
-                                        )}
-                                        <div className="artist-info">
-                                            <span className="artist-name">{artist.name}</span>
+                                    <div key={artist.id || index} className="artist-item-wrapper">
+                                        <div 
+                                            className="artist-item"
+                                            onClick={() => setSelectedItem( 
+                                                selectedItem?.type === "artist" && selectedItem?.name === artist.name
+                                                    ? null
+                                                    : { type: "artist", name: artist.name }
+                                            )}
+                                        >
+                                            <span className="track-number">{index + 1}</span>
+                                            {artist.images?.length > 0 && (
+                                                <img
+                                                    src={artist.images[2]?.url || artist.images[0]?.url}
+                                                    alt={artist.name}
+                                                    className="artist-image"
+                                                />
+                                            )}
+                                            <div className="artist-info">
+                                                <span className="artist-name">{artist.name}</span>
+                                            </div>
                                         </div>
+                                    {/* Popup for the artists */}
+                                    {selectedItem?.type === "artist" && selectedItem?.name === artist.name && (
+                                        <div className="similar-popup">
+                                            <p>Generate similar song by {artist.name}</p>
+                                            <button 
+                                                className="popup-yes-btn" 
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    generateRecommendation(null, {
+                                                        type: "artist",
+                                                        name: artist.name
+                                                    })
+                                                }}
+                                            >
+                                                Yes
+                                            </button>
+                                        </div>
+                                    )}
                                     </div>
                                 ))}
                             </div>
