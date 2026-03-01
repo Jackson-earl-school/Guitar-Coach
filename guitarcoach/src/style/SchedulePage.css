@@ -4,10 +4,32 @@
     box-sizing: border-box;
 }
 
+.schedule-header {
+    background-color: white;
+    height: 80px;
+}
+
+.schedule-header .profile-button {
+    background-color: #f3f5e2;
+    border: 2px solid #000;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+}
+
 .schedule-container {
     max-width: 1400px;
-    margin: 0 auto;
-    background-color: white;
+    margin: 40px auto;
+    padding: 20px 20px;
+    background-color: #B57F50;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     overflow-x: auto;
@@ -15,6 +37,7 @@
 
 .schedule-title {
     text-align: center;
+    padding-bottom: 10px;
 }
 
 .schedule-grid {
@@ -24,9 +47,10 @@
 }
 
 .day-column {
-    border: 1px solid #ddd;
+    border: 1px solid black;
     padding: 10px;
-    border-right: 1px solid #e0e0e0;
+    border-right: 1px solid #000000;
+    border-left: 1px solid #000000;
     min-height: 500px;
 }
 
@@ -48,4 +72,9 @@
     left: 4px;
     color: #666;
     font-weight: bold;
+}
+
+.schedule-footer {
+    background-color: white;
+    padding: 50px 20px;
 }

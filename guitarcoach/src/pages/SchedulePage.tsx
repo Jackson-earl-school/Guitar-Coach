@@ -1,11 +1,12 @@
 import "../style/SchedulePage.css"
+import { Link } from 'react-router-dom'
 
 function SchedulePage() {
     return (
         <div className="schedule-page">
             <header className="schedule-header">
                 <div className="container">
-                    <div className="logo">
+                    <div className="logo" onClick={() => { window.location.href = '/dashboard'; }}>
                         GuitarCoach
                     </div>
                     <nav className='navbar'>
@@ -87,7 +88,11 @@ function SchedulePage() {
             <footer className="schedule-footer">
                 <div className="footer-container">
                     <div className="footer-section">
-                        <h3>Contact Us</h3>
+                        <div>
+                            <Link to="/" className='logo'>
+                                GuitarCoach
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </footer>
