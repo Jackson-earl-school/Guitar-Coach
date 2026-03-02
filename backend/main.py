@@ -1,8 +1,11 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from supabase_client import supabase
-from spotify import router as spotify_router
-from recommendation import router as recommendation_router
+
+from backend.supabase_client import supabase
+from backend.spotify import router as spotify_router
+from backend.recommendation import router as recommendation_router
+from backend.routes.practice_plan import router as practice_plan_router
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,6 +22,7 @@ app.add_middleware(
 
 app.include_router(recommendation_router)
 app.include_router(spotify_router)
+app.include_router(practice_plan_router)
 
 @app.get("/api/health")
 def health_check():
