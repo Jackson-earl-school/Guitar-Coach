@@ -1,9 +1,6 @@
-# backend/routes/practice_plan.py
 import json
-import os
-from typing import List, Optional, Literal, Dict, Any
+from typing import Optional, Literal, Dict, Any
 
-import httpx
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from openai import OpenAI
@@ -13,39 +10,52 @@ from backend.supabase_client import supabase
 router = APIRouter()
 client = OpenAI()
 
-YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
-YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
-
-async def search_youtube(query: str) -> Optional[Dict]:
-    """Search YouTube and return the top result as a resource dict."""
-    if not YOUTUBE_API_KEY:
-        return None
-    params = {
-        "part": "snippet",
-        "q": query,
-        "type": "video",
-        "maxResults": 1,
-        "key": YOUTUBE_API_KEY,
-    }
-    async with httpx.AsyncClient() as http:
-        resp = await http.get(YOUTUBE_SEARCH_URL, params=params, timeout=5)
-        resp.raise_for_status()
-        items = resp.json().get("items", [])
-        if not items:
-            return None
-        item = items[0]
-        video_id = item["id"]["videoId"]
-        title = item["snippet"]["title"]
-        return {
-            "title": title,
-            "url": f"https://www.youtube.com/watch?v={video_id}",
-        }
-
 class PracticePlanRequest(BaseModel):
     song_title: str
     artist: Optional[str] = None
     minutes_per_day: int = 15
     skill_level: Optional[Literal["beginner", "intermediate", "advanced"]] = None
+
+SYSTEM_PROMPT = """
+You are GuitarCoach, a guitar instructor/organizer. Output ONLY valid JSON with no markdown and no extra text.
+
+Generate a detailed weekly practice plan (Sunday - Saturday) for learning a specific song.
+
+Each day should follow this exact JSON format:
+
+{
+  "song_title": "string",
+  "artist": "string",
+  "skill_level": "string",
+  "weekly_goal": {
+    "description": "string — overarching goal for the week",
+    "milestones": ["string", "string", "string"]
+  },
+  "days": [
+    {
+      "day": "Monday",
+      "focus": "string — one-line summary of today's focus",
+      "tasks": [
+        {
+          "title": "string — short task name",
+          "duration_minutes": number,
+          "technique": "string — specific technique being practiced",
+          "instructions": "string — step by step instructions on what to do",
+          "why": "string — explanation of why this task helps them learn the song",
+          "milestone": "string — measurable goal to hit before moving on (e.g. play at 60 BPM cleanly 3x in a row)"
+        }
+      ]
+    }
+  ]
+}
+
+Rules:
+- Distribute tasks so total duration per day matches the user's minutes_per_day.
+- Make every task specific to the song and skill level.
+- Milestones must be concrete and measurable.
+- The 'why' field must explain the musical reason.
+- Do NOT include any YouTube links or external URLs.
+"""
 
 @router.post("/api/practice-plan")
 async def practice_plan(req: PracticePlanRequest, request: Request):
@@ -67,47 +77,27 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
         "artist": req.artist,
         "skill_level": skill_level,
         "minutes_per_day": req.minutes_per_day,
-        "rules": [
-            "Return ONLY valid JSON. No markdown or extra text.",
-            "Make the plan specific to the song provided.",
-            # Key change: ask for search queries, NOT urls
-            "For resources, provide YouTube search queries (not URLs) as 'search_query' strings.",
-            "Include 2-3 resource objects, each with a 'title' (descriptive label) and 'search_query'.",
-        ],
     }
 
     try:
         resp = client.responses.create(
             model="gpt-4o-mini",
             input=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are GuitarCoach, a guitar instructor. "
-                        "Output ONLY valid JSON. Provide a weekly practice plan (Monday–Friday) "
-                        "with goals, tasks, and resource search queries. "
-                        "Example resource: {\"title\": \"Beginner chord tutorial\", \"search_query\": \"Wonderwall Oasis guitar tutorial beginner\"}"
-                    ),
-                },
+                {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": json.dumps(payload)},
             ],
         )
 
         raw = (resp.output_text or "").strip()
+
+        # protective measure for if the ai model wraps response in "'''"
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+            raw = raw.strip()
+
         plan = json.loads(raw)
-
-        # Replace AI-generated search queries with real YouTube links
-        resources = plan.get("resources", [])
-        real_resources = []
-        for r in resources[:3]:
-            query = r.get("search_query") or r.get("title", "")
-            if not query:
-                continue
-            result = await search_youtube(f"{query} guitar tutorial")
-            if result:
-                real_resources.append(result)
-
-        plan["resources"] = real_resources
         return plan
 
     except json.JSONDecodeError:
