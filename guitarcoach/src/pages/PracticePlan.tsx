@@ -1,8 +1,7 @@
 import { useState } from "react"
 import { supabase } from "../supabaseClient"
-
-// copy style from find songs to ensure consistent styles
 import "../style/FindSongs.css"
+import "../style/PracticePlan.css"
 
 type Task = {
   title: string
@@ -35,23 +34,22 @@ type PracticePlan = {
 export default function PracticePlanPage() {
   const [songTitle, setSongTitle] = useState("")
   const [artist, setArtist] = useState("")
-  const [minutesPerDay, setMinutesPerDay] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [result, setResult] = useState<PracticePlan | null>(null)
-  const [expandedDay, setExpandedDay] = useState<string | null>(null)
+  const [expandedTask, setExpandedTask] = useState<string | null>(null)
 
-  function toggleDay(day: string) {
-    setExpandedDay((prev) => (prev === day ? null : day))
+  // key is "dayIndex-taskIndex"
+  function toggleTask(key: string) {
+    setExpandedTask((prev) => (prev === key ? null : key))
   }
 
   async function generatePlan() {
     setLoading(true)
     setError("")
     setResult(null)
-    setExpandedDay(null)
+    setExpandedTask(null)
 
-    // check if in valid session
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
     if (sessionError || !sessionData.session) {
       setError("You must be logged in.")
@@ -59,7 +57,6 @@ export default function PracticePlanPage() {
       return
     }
 
-    // obtain token
     const token = sessionData.session.access_token
 
     try {
@@ -72,7 +69,6 @@ export default function PracticePlanPage() {
         body: JSON.stringify({
           song_title: songTitle.trim(),
           artist: artist.trim(),
-          minutes_per_day: minutesPerDay,
         }),
       })
 
@@ -81,7 +77,6 @@ export default function PracticePlanPage() {
         setError(data?.detail ?? "Failed to generate practice plan.")
       } else {
         setResult(data)
-        if (data.days?.length) setExpandedDay(data.days[0].day)
       }
     } catch (e: any) {
       setError(e?.message ?? "Network error.")
@@ -90,7 +85,7 @@ export default function PracticePlanPage() {
     }
   }
 
-  const canGenerate = songTitle.trim() && artist.trim() && !loading
+  const canGenerate = !!songTitle.trim() && !!artist.trim() && !loading
 
   return (
     <div className="dashboard-page">
@@ -118,25 +113,19 @@ export default function PracticePlanPage() {
       <main className="find-songs-main">
         <h1 className="page-title">Practice Plan</h1>
 
-        {/* form */}
-        <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 25, flexWrap: "wrap" }}>
+        {/* user input form */}
+        <div className="pp-form">
           <input
+            className="pp-input"
             placeholder="Song title"
             value={songTitle}
             onChange={(e) => setSongTitle(e.target.value)}
-            style={inputStyle}
           />
           <input
+            className="pp-input"
             placeholder="Artist"
             value={artist}
             onChange={(e) => setArtist(e.target.value)}
-            style={inputStyle}
-          />
-          <input
-            placeholder="Minutes/Day"
-            value={minutesPerDay}
-            onChange={(e) => setMinutesPerDay(e.target.value)}
-            style={inputStyle}
           />
           <button
             className="generate-btn"
@@ -145,123 +134,93 @@ export default function PracticePlanPage() {
           >
             {loading ? "Generating..." : "Generate Plan"}
           </button>
-          {error && <p className="error" style={{ margin: 0 }}>{error}</p>}
+          {error && <p className="error pp-error">{error}</p>}
         </div>
-
-        {/* results */}
-        {result && (
-          <div className="content-layout" style={{ alignItems: "flex-start" }}>
-
-            {/* weekly goal - left side */}
-            <section style={{ width: 220, flexShrink: 0 }}>
-              <h2 style={{ fontSize: 16, fontWeight: "bold", margin: "0 0 12px" }}>Weekly Goal</h2>
-              <div className="info-box" style={{ minWidth: "unset", minHeight: "unset" }}>
-                <p style={{ margin: "0 0 12px", fontSize: 14, lineHeight: 1.5 }}>
-                  {result.weekly_goal.description}
-                </p>
-                <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 8px" }}>Milestones</h3>
-                {result.weekly_goal.milestones.map((m, i) => (
-                  <p key={i} style={{ fontSize: 13, margin: "4px 0", color: "#333" }}>✓ {m}</p>
-                ))}
-              </div>
-            </section>
-
-            {/* plan for each day - middle */}
-            <section className="recommendation-column" style={{ gap: 8 }}>
-              {result.days?.map((day) => (
-                <div key={day.day} style={{ width: "100%" }}>
-                  {/* day row */}
-                  <div
-                    className="track-item"
-                    onClick={() => toggleDay(day.day)}
-                    style={{
-                      borderRadius: expandedDay === day.day ? "8px 8px 0 0" : 25,
-                      height: "auto",
-                      padding: "10px 16px",
-                      cursor: "pointer",
-                      justifyContent: "space-between",
-                      backgroundColor: expandedDay === day.day ? "#B57F50" : "#d9d9d9",
-                      color: expandedDay === day.day ? "#fff" : "#000",
-                    }}
-                  >
-                    <span style={{ fontWeight: 700, fontSize: 14 }}>{day.day}</span>
-                    <span style={{ fontSize: 12, opacity: 0.8 }}>
-                      {day.focus} {expandedDay === day.day ? "▲" : "▼"}
-                    </span>
-                  </div>
-
-                  {/* expand tasks */}
-                  {expandedDay === day.day && (
-                    <div style={{
-                      background: "rgba(255,255,255,0.15)",
-                      border: "2px solid #B57F50",
-                      borderTop: "none",
-                      borderRadius: "0 0 8px 8px",
-                      padding: 16,
-                      display: "grid",
-                      gap: 12,
-                    }}>
-                      {day.tasks?.map((task, i) => (
-                        <div key={i} className="info-box" style={{ minHeight: "unset", minWidth: "unset" }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                            <strong style={{ fontSize: 15 }}>{task.title}</strong>
-                            <span style={{ fontSize: 12, color: "#666" }}>⏱ {task.duration_minutes} min</span>
-                          </div>
-                          <p style={{ fontSize: 12, color: "#777", margin: "0 0 10px", fontStyle: "italic" }}>
-                            {task.technique}
-                          </p>
-                          <h3 style={{ fontSize: 12, margin: "0 0 4px" }}>Instructions</h3>
-                          <p style={{ fontSize: 13, margin: "0 0 10px", lineHeight: 1.5, color: "#333" }}>
-                            {task.instructions}
-                          </p>
-                          <h3 style={{ fontSize: 12, margin: "0 0 4px" }}>Why this helps</h3>
-                          <p style={{ fontSize: 13, margin: "0 0 10px", lineHeight: 1.5, color: "#333" }}>
-                            {task.why}
-                          </p>
-                          <h3 style={{ fontSize: 12, margin: "0 0 4px" }}>Milestone</h3>
-                          <p style={{ fontSize: 13, margin: 0, color: "#2a7a2a", fontWeight: 500 }}>
-                            ✓ {task.milestone}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </section>
-
-            {/* song information - right Side */}
-            <section style={{ width: 220, flexShrink: 0 }}>
-              <h2 style={{ fontSize: 16, fontWeight: "bold", margin: "0 0 12px" }}>Song</h2>
-              <div className="info-box" style={{ minWidth: "unset", minHeight: "unset", marginTop: 12 }}>
-                <p style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 6px" }}></p>
-                <p style={{ margin: "0 0 4px", fontSize: 14, fontWeight: 600 }}>{result.song_title}</p>
-                <p style={{ margin: "0 0 8px", fontSize: 13, color: "#555" }}>{result.artist}</p>
-                <p style={{ margin: 0, fontSize: 12, color: "#777", textTransform: "capitalize" }}>
-                  {result.skill_level} · {minutesPerDay} min/day
-                </p>
-              </div>
-            </section>
-
-          </div>
-        )}
 
         {/* empty state */}
         {!result && !loading && (
-          <div className="empty-recommendation" style={{ marginTop: 0 }}>
+          <div className="empty-recommendation">
             <p>Enter a song and artist above to generate your personalized weekly practice plan!</p>
+          </div>
+        )}
+
+        {/* results */}
+        {result && (
+          <div className="pp-results">
+
+            {/* song information and weekly goal summary row */}
+            <div className="pp-summary-row">
+              <div className="info-box pp-summary-box">
+                <p className="pp-song-title">{result.song_title}</p>
+                <p className="pp-song-artist">{result.artist}</p>
+                <p className="pp-song-skill"><span className="pp-song-skill">skill level:</span> {result.skill_level}</p>
+              </div>
+              <div className="info-box pp-summary-box pp-goal-box">
+                <p className="pp-section-label">Weekly Goal</p>
+                <p className="pp-goal-description">{result.weekly_goal.description}</p>
+                <p className="pp-section-label">Milestones</p>
+                {result.weekly_goal.milestones.map((m, i) => (
+                  <p key={i} className="pp-milestone">✓ {m}</p>
+                ))}
+              </div>
+            </div>
+
+            {/* days separated in 7 columns */}
+            <div className="pp-calendar">
+              {result.days?.map((day, dayIndex) => (
+                <div key={day.day} className="pp-day-column">
+
+                  {/* day header */}
+                  <div className="pp-day-header">
+                    <span className="pp-day-name">{day.day}</span>
+                    <span className="pp-day-focus">{day.focus}</span>
+                  </div>
+
+                  {/* task list */}
+                  <div className="pp-task-list">
+                    {day.tasks?.map((task, taskIndex) => {
+                      const key = `${dayIndex}-${taskIndex}`
+                      const isOpen = expandedTask === key
+                      return (
+                        <div key={taskIndex} className="pp-task-card">
+                          {/* clickable and exandable title row */}
+                          <div
+                            className={`pp-task-title-row ${isOpen ? "pp-task-title-row--open" : ""}`}
+                            onClick={() => toggleTask(key)}
+                          >
+                            <span className="pp-task-name">{task.title}</span>
+                            <span className="pp-task-meta">
+                              {task.duration_minutes}m {isOpen ? "▲" : "▼"}
+                            </span>
+                          </div>
+
+                          {/* expanded details */}
+                          {isOpen && (
+                            <div className="pp-task-detail">
+                              <p className="pp-task-technique">{task.technique}</p>
+
+                              <p className="pp-detail-label">Instructions</p>
+                              <p className="pp-detail-body">{task.instructions}</p>
+
+                              <p className="pp-detail-label">Why this helps</p>
+                              <p className="pp-detail-body">{task.why}</p>
+
+                              <p className="pp-detail-label">Milestone</p>
+                              <p className="pp-detail-milestone">✓ {task.milestone}</p>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                </div>
+              ))}
+            </div>
+
           </div>
         )}
       </main>
     </div>
   )
-}
-
-const inputStyle: React.CSSProperties = {
-  padding: "10px 16px",
-  fontSize: 14,
-  borderRadius: 25,
-  border: "2px solid #000",
-  backgroundColor: "#fff",
-  outline: "none",
 }

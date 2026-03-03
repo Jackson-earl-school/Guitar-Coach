@@ -1,0 +1,214 @@
+.pp-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.pp-input {
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 25px;
+    border: 2px solid #000;
+    background-color: #fff;
+    outline: none;
+}
+
+.pp-error {
+    margin: 0;
+}
+
+/* results */
+.pp-results {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* summary row with song information */
+.pp-summary-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.pp-summary-box {
+    min-width: unset;
+    min-height: unset;
+    flex: 1;
+}
+
+.pp-goal-box {
+    flex: 3;
+}
+
+.pp-song-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.pp-song-artist {
+    font-size: 13px;
+    color: #555;
+    margin: 0 0 6px;
+}
+
+.pp-song-skill {
+    font-size: 13px;
+    color: #555;
+    text-transform: lowercase;
+    margin: 0;
+}
+
+.pp-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+    margin: 0 0 5px;
+}
+
+.pp-goal-description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+    margin: 0 0 10px;
+}
+
+.pp-milestone {
+    font-size: 13px;
+    color: #333;
+    margin: 3px 0;
+}
+
+/* calendar style with 7 columns per day */
+.pp-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    align-items: start;
+}
+
+/* day column */
+.pp-day-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.pp-day-header {
+    background-color: #B57F50;
+    border-radius: 8px;
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pp-day-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.pp-day-focus {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.3;
+}
+
+/* task list */
+.pp-task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* task card */
+.pp-task-card {
+    background-color: #d9d9d9;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pp-task-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    cursor: pointer;
+    gap: 6px;
+    border-radius: 8px;
+    transition: background-color 0.15s;
+}
+
+.pp-task-title-row:hover {
+    background-color: #ccc;
+}
+
+.pp-task-title-row--open {
+    background-color: #B57F50;
+    color: #fff;
+    border-radius: 8px 8px 0 0;
+}
+
+.pp-task-title-row--open:hover {
+    background-color: #a06d40;
+}
+
+.pp-task-name {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.pp-task-meta {
+    font-size: 11px;
+    color: inherit;
+    opacity: 0.75;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* expanded task detail */
+.pp-task-detail {
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 0 0 8px 8px;
+    border: 2px solid #B57F50;
+    border-top: none;
+}
+
+.pp-task-technique {
+    font-size: 11px;
+    color: #888;
+    font-style: italic;
+    margin: 0 0 8px;
+}
+
+.pp-detail-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #aaa;
+    margin: 8px 0 3px;
+}
+
+.pp-detail-body {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #333;
+    margin: 0;
+}
+
+.pp-detail-milestone {
+    font-size: 12px;
+    color: #2a7a2a;
+    font-weight: 600;
+    margin: 0;
+}

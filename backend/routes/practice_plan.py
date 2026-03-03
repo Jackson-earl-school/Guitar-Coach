@@ -12,8 +12,7 @@ client = OpenAI()
 
 class PracticePlanRequest(BaseModel):
     song_title: str
-    artist: Optional[str] = None
-    minutes_per_day: int = 15
+    artist: str
     skill_level: Optional[Literal["beginner", "intermediate", "advanced"]] = None
 
 SYSTEM_PROMPT = """
@@ -57,6 +56,17 @@ Rules:
 - Do NOT include any YouTube links or external URLs.
 """
 
+# parse the practice time from questionnaire json
+def parse_minutes(practicing: str) -> int:
+    mapping = {
+        "15 minutes": 15,
+        "30 minutes": 30,
+        "1 hour": 60,
+        "more than 1 hour": 90,
+    }
+    return mapping.get(practicing.lower().strip(), 15) # if unable to parse, return 15
+
+
 @router.post("/api/practice-plan")
 async def practice_plan(req: PracticePlanRequest, request: Request):
     auth_header = request.headers.get("authorization", "")
@@ -65,10 +75,28 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
+    # verify token and get user id
     try:
-        supabase.auth.get_user(token)
+        user_resp = supabase.auth.get_user(token)
+        user_id = user_resp.user.id
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
+    
+    # fetch questionnaire answers from profiles table
+    try:
+        profile = (
+            supabase.table("profiles")
+            .select("questionnaire_answers")
+            .eq("id", user_id)
+            .single()
+            .execute()
+        )
+        answers: dict = profile.data.get("questionnaire_answers") or {}
+    except Exception:
+        answers = {}
+
+    # pull minutes from questionnaire, fall back to defaults
+    minutes_per_day = parse_minutes(answers.get("practicing", "15 minutes"))
 
     skill_level = req.skill_level or "beginner"
 
@@ -76,8 +104,14 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
         "song_title": req.song_title,
         "artist": req.artist,
         "skill_level": skill_level,
-        "minutes_per_day": req.minutes_per_day,
+        "minutes_per_day": minutes_per_day,
+        # pass extra context so the ai can tailor the plan further
+        "play_style": answers.get("play_style", []),
+        "techniques": answers.get("techniques", {}),
+        "technical_skills": answers.get("technical skills", []),
+        "goal": answers.get("goal", ""),
     }
+
 
     try:
         resp = client.responses.create(
@@ -89,13 +123,6 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
         )
 
         raw = (resp.output_text or "").strip()
-
-        # protective measure for if the ai model wraps response in "'''"
-        if raw.startswith("```"):
-            raw = raw.split("```")[1]
-            if raw.startswith("json"):
-                raw = raw[4:]
-            raw = raw.strip()
 
         plan = json.loads(raw)
         return plan
