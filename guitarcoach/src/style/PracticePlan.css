@@ -1,3 +1,4 @@
+/* Form */
 .pp-form {
     display: flex;
     gap: 10px;
@@ -19,14 +20,14 @@
     margin: 0;
 }
 
-/* results */
+/* Results */
 .pp-results {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* Main layout - calendar left, sidebar right */
+/* Main layout: calendar left, sidebar right */
 .pp-main-layout {
     display: flex;
     gap: 24px;
@@ -46,17 +47,37 @@
     border: 2px solid #B57F50;
 }
 
+.pp-song-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: #000;
+}
+
+.pp-song-detail {
+    font-size: 13px;
+    color: #333;
+    margin: 4px 0;
+}
+
+.pp-song-detail-label {
+    font-weight: 600;
+}
+
 .pp-sidebar-skill {
     font-size: 14px;
     color: #333;
-    margin: 0 0 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #ddd;
+    margin: 8px 0 0;
 }
 
 .pp-skill-label {
     font-weight: 600;
     color: #000;
+}
+
+.pp-sidebar-divider {
+    border-top: 1px solid #ddd;
+    margin: 14px 0;
 }
 
 .pp-section-label {
@@ -81,7 +102,30 @@
     margin: 3px 0;
 }
 
-/* calendar style with 7 columns per day */
+/* Save button */
+.pp-save-btn {
+    margin-top: 12px;
+    margin-bottom: 4px;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 25px;
+    border: 2px solid #000;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.pp-save-btn:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.pp-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Calendar */
 .pp-calendar {
     flex: 1;
     display: grid;
@@ -92,7 +136,7 @@
     min-width: 0;
 }
 
-/* day column */
+/* Day column */
 .pp-day-column {
     display: flex;
     flex-direction: column;
@@ -101,18 +145,10 @@
     position: relative;
 }
 
-/* task list */
-.pp-task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    position: relative;
-}
-
 .pp-day-header {
     background-color: #B57F50;
     border-radius: 8px;
-    padding: 10px 10px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -130,7 +166,15 @@
     line-height: 1.3;
 }
 
-/* task card */
+/* Task list */
+.pp-task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+}
+
+/* Task card */
 .pp-task-card {
     background-color: #d9d9d9;
     border-radius: 8px;
@@ -183,7 +227,7 @@
     flex-shrink: 0;
 }
 
-/* expanded task detail */
+/* Expanded task detail */
 .pp-task-detail {
     position: absolute;
     top: 100%;
@@ -240,7 +284,7 @@
     border-radius: 6px;
 }
 
-/* Loading Spinner */
+/* Loading spinner */
 .loading-container {
     display: flex;
     flex-direction: column;
@@ -269,4 +313,60 @@
     font-size: 16px;
     color: #555;
     margin: 0;
+}
+
+/* Saved plans list */
+.pp-saved-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 500px;
+}
+
+.pp-saved-item {
+    height: auto !important;
+    padding: 10px 16px !important;
+    border-radius: 25px !important;
+    justify-content: space-between !important;
+}
+
+.pp-saved-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pp-saved-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.pp-load-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    border-radius: 25px;
+    border: 2px solid #000;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pp-load-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.pp-delete-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    border-radius: 25px;
+    border: 2px solid #c00;
+    background-color: #fff;
+    color: #c00;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pp-delete-btn:hover {
+    background-color: #fff0f0;
 }
