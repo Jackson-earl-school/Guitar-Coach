@@ -56,7 +56,6 @@ Rules:
 - Do NOT include any YouTube links or external URLs.
 """
 
-# parse the practice time from questionnaire json
 def parse_minutes(practicing: str) -> int:
     mapping = {
         "15 minutes": 15,
@@ -64,9 +63,96 @@ def parse_minutes(practicing: str) -> int:
         "1 hour": 60,
         "more than 1 hour": 90,
     }
-    return mapping.get(practicing.lower().strip(), 15) # if unable to parse, return 15
+    return mapping.get(practicing.lower().strip(), 15)
 
 
+# save a practice plan
+@router.post("/api/practice-plan/save")
+async def save_practice_plan(request: Request):
+    auth_header = request.headers.get("authorization", "")
+    token = auth_header.replace("Bearer ", "")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    try:
+        user_resp = supabase.auth.get_user(token)
+        user_id = user_resp.user.id
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    try:
+        body = await request.json()
+        plan = body.get("plan")
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid request body.")
+
+    if not plan:
+        raise HTTPException(status_code=400, detail="No plan provided.")
+
+    try:
+        supabase.table("practice_plans").insert({
+            "user_id": user_id,
+            "song_title": plan.get("song_title", ""),
+            "artist": plan.get("artist", ""),
+            "plan": plan,
+        }).execute()
+        return {"message": "Plan saved."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save plan: {e}")
+
+
+# get all saved practice plans
+@router.get("/api/practice-plan/saved")
+async def get_saved_plans(request: Request):
+    auth_header = request.headers.get("authorization", "")
+    token = auth_header.replace("Bearer ", "")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    try:
+        user_resp = supabase.auth.get_user(token)
+        user_id = user_resp.user.id
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    try:
+        resp = (
+            supabase.table("practice_plans")
+            .select("id, song_title, artist, plan, created_at")
+            .eq("user_id", user_id)
+            .order("created_at", desc=True)
+            .execute()
+        )
+        return resp.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch plans: {e}")
+
+
+# delete a saved practice plan
+@router.delete("/api/practice-plan/saved/{plan_id}")
+async def delete_practice_plan(plan_id: str, request: Request):
+    auth_header = request.headers.get("authorization", "")
+    token = auth_header.replace("Bearer ", "")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    try:
+        user_resp = supabase.auth.get_user(token)
+        user_id = user_resp.user.id
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    try:
+        supabase.table("practice_plans").delete().eq("id", plan_id).eq("user_id", user_id).execute()
+        return {"message": "Plan deleted."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete plan: {e}")
+
+
+# generate a practice plan
 @router.post("/api/practice-plan")
 async def practice_plan(req: PracticePlanRequest, request: Request):
     auth_header = request.headers.get("authorization", "")
@@ -75,14 +161,12 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
 
-    # verify token and get user id
     try:
         user_resp = supabase.auth.get_user(token)
         user_id = user_resp.user.id
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
-    # fetch questionnaire answers from profiles table
+
     try:
         profile = (
             supabase.table("profiles")
@@ -95,9 +179,7 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
     except Exception:
         answers = {}
 
-    # pull minutes from questionnaire, fall back to defaults
     minutes_per_day = parse_minutes(answers.get("practicing", "15 minutes"))
-
     skill_level = req.skill_level or "beginner"
 
     payload: Dict[str, Any] = {
@@ -105,13 +187,11 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
         "artist": req.artist,
         "skill_level": skill_level,
         "minutes_per_day": minutes_per_day,
-        # pass extra context so the ai can tailor the plan further
         "play_style": answers.get("play_style", []),
         "techniques": answers.get("techniques", {}),
         "technical_skills": answers.get("technical skills", []),
         "goal": answers.get("goal", ""),
     }
-
 
     try:
         resp = client.responses.create(

@@ -26,7 +26,7 @@
     gap: 20px;
 }
 
-/* summary row with song information */
+/* summary row */
 .pp-summary-row {
     display: flex;
     gap: 16px;
@@ -44,21 +44,26 @@
 }
 
 .pp-song-title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
-    margin: 0 0 4px;
+    margin: 0 0 8px;
+    color: #000;
 }
 
-.pp-song-artist {
+.pp-song-detail {
     font-size: 13px;
-    color: #555;
-    margin: 0 0 6px;
+    color: #333;
+    margin: 4px 0;
 }
 
-.pp-song-skill {
-    font-size: 13px;
-    color: #555;
-    text-transform: lowercase;
+.pp-song-detail-label {
+    font-weight: 600;
+}
+
+.pp-song-meta {
+    font-size: 12px;
+    color: #888;
+    text-transform: capitalize;
     margin: 0;
 }
 
@@ -84,7 +89,28 @@
     margin: 3px 0;
 }
 
-/* calendar style with 7 columns per day */
+/* save button */
+.pp-save-btn {
+    margin-top: 12px;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 25px;
+    border: 2px solid #000;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pp-save-btn:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.pp-save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* calendar grid */
 .pp-calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -103,7 +129,7 @@
 .pp-day-header {
     background-color: #B57F50;
     border-radius: 8px;
-    padding: 10px 10px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -168,7 +194,6 @@
 
 .pp-task-meta {
     font-size: 11px;
-    color: inherit;
     opacity: 0.75;
     white-space: nowrap;
     flex-shrink: 0;
@@ -211,4 +236,60 @@
     color: #2a7a2a;
     font-weight: 600;
     margin: 0;
+}
+
+/* saved plans list */
+.pp-saved-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 500px;
+}
+
+.pp-saved-item {
+    height: auto !important;
+    padding: 10px 16px !important;
+    border-radius: 25px !important;
+    justify-content: space-between !important;
+}
+
+.pp-saved-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pp-saved-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.pp-load-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    border-radius: 25px;
+    border: 2px solid #000;
+    background-color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pp-load-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.pp-delete-btn {
+    padding: 5px 14px;
+    font-size: 12px;
+    border-radius: 25px;
+    border: 2px solid #c00;
+    background-color: #fff;
+    color: #c00;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pp-delete-btn:hover {
+    background-color: #fff0f0;
 }
