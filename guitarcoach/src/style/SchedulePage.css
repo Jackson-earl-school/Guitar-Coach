@@ -1,15 +1,38 @@
-* {
+.dashboard-header {
+    background-color: #fff;
+    padding: 15px 40px;
+    border-bottom: 3.75px solid #B57F50;
+    border-top: 3.75px solid #B57F50;
+}
+
+.dashboard-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-header .logo {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.dashboard-header .navbar-list {
+    list-style-type: none;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.schedule-header {
-    background-color: white;
-    height: 80px;
+.dashboard-header .navbar-list li a {
+    display: block;
+    color: black;
+    padding: 10px 15px;
+    text-decoration: none;
 }
 
-.schedule-header .profile-button {
+.dashboard-header .profile-button {
     background-color: #f3f5e2;
     border: 2px solid #000;
     border-radius: 50px;
@@ -19,10 +42,8 @@
     transition: background-color 0.2s;
 }
 
-.container {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 10px;
+.dashboard-header .profile-button:hover {
+    background-color: #f0f0f0;
 }
 
 .schedule-container {

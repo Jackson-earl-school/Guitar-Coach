@@ -1,28 +1,17 @@
-#root {
-    width: 100%;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #B4D2BA;
-}
-
 .homepage-header {
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     height: 80px;
 }
 
 .container {
     display: flex;
     justify-content: space-between;
-    padding-top: 10px;
+    align-items: center;
 }
 
 .logo {
     font-size: 15px;
     font-weight: bold;
-    margin-left: 20px;
-    margin-top: 20px;
     text-decoration: none;
     color: inherit;
 }
@@ -44,7 +33,7 @@
 .navbar-list li a {
     display: block;
     color: black;
-    margin: 20px 25px;
+    padding: 10px 15px;
     text-decoration: none;
 }
 

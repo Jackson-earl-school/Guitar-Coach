@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 function SchedulePage() {
     return (
         <div className="schedule-page">
-            <header className="schedule-header">
+            <header className="dashboard-header">
                 <div className="container">
                     <div className="logo" onClick={() => { window.location.href = '/dashboard'; }}>
                         GuitarCoach

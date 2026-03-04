@@ -25,7 +25,7 @@
 .container {
     display: flex;
     justify-content: space-between;
-    padding-top: 10px;
+    align-items: center;
 }
 
 .logo {

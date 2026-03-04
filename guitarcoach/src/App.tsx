@@ -8,6 +8,7 @@ import DashboardPage from './pages/Dashboard.tsx'
 import SchedulePage from './pages/SchedulePage.tsx'
 import FindSongs from './pages/FindSongs.tsx'
 import PracticePlanPage from './pages/PracticePlan.tsx'
+import ProgressPage from './pages/ProgressPage.tsx'
 
 function App() {
   return (
@@ -49,6 +50,12 @@ function App() {
       <Route path="/practice-plans" element={
         <ProtectedRoute>
           <PracticePlanPage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/progress" element={
+        <ProtectedRoute>
+          <ProgressPage />
         </ProtectedRoute>
       } />
 

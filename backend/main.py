@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.supabase_client import supabase
-from backend.spotify import router as spotify_router
-from backend.recommendation import router as recommendation_router
-from backend.routes.practice_plan import router as practice_plan_router
+from supabase_client import supabase
+from spotify import router as spotify_router
+from recommendation import router as recommendation_router
+from routes.practice_plan import router as practice_plan_router
 
 from dotenv import load_dotenv
 

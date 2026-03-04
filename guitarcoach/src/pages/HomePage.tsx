@@ -102,7 +102,7 @@ function HomePage() {
                 <div className="footer-container">
                     <div className="footer-section">
                         <div>
-                            <Link to="/" className='logo'>
+                            <Link to="/dashboard" className='logo'>
                                 GuitarCoach
                             </Link>
                         </div>

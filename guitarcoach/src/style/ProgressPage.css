@@ -1,0 +1,461 @@
+ .progress-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+}
+
+ 
+ /* ------------ Header ------------- */
+
+.dashboard-header {
+    background-color: #fff;
+    padding: 15px 40px;
+    border-bottom: 3.75px solid #B57F50;
+    border-top: 3.75px solid #B57F50;
+}
+
+.dashboard-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-header .logo {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.dashboard-header .navbar-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dashboard-header .navbar-list li a {
+    display: block;
+    color: black;
+    padding: 10px 15px;
+    text-decoration: none;
+}
+
+.dashboard-header .profile-button {
+    background-color: #f3f5e2;
+    border: 2px solid #000;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dashboard-header .profile-button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Main Dashboard Area */
+.progress-main {
+    flex: 1;
+    background-color: #9cb99c;
+    padding: 50px 80px;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #000;
+    margin: 0 0 25px 0;
+}
+
+/* Two-Column Layout */
+.progress-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 60px;
+    align-items: flex-start;
+}
+
+/* Left Column - Radar Section */
+.radar-section {
+    flex: 2;
+    max-width: 55%;
+}
+
+.radar-title {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+}
+
+.radar-subtitle {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 14px;
+}
+
+.radar-chart-wrapper {
+    width: 100%;
+    height: 550px;
+}
+
+/* Remove focus outline from chart */
+.radar-chart-wrapper svg,
+.radar-chart-wrapper svg *,
+.radar-chart-wrapper .recharts-wrapper,
+.radar-chart-wrapper .recharts-surface {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.radar-chart-wrapper *:focus {
+    outline: none !important;
+}
+
+/* Skill Bars */
+.skill-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.skill-bar-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 10px 14px;
+}
+
+.skill-bar-label {
+    flex: 0 0 120px;
+    font-weight: bold;
+    color: #000;
+    font-size: 14px;
+}
+
+.skill-bar-track {
+    flex: 1;
+    height: 100%;
+    background-color: transparent;
+    border-radius: 4px;
+    margin: 0 12px;
+    position: relative;
+}
+
+.skill-bar-fill {
+    position: absolute;
+    left: -132px;
+    top: -10px;
+    bottom: -10px;
+    background-color: rgba(157, 183, 157, 0.6);
+    border-radius: 6px 0 0 6px;
+    z-index: -1;
+}
+
+.skill-bar-value {
+    flex: 0 0 50px;
+    text-align: right;
+    font-weight: bold;
+    color: #000;
+    font-size: 14px;
+}
+
+/* Right Column - Profile Section */
+.profile-section {
+    flex: 1;
+    max-width: 45%;
+}
+
+/* Player Type Emblem */
+.player-emblem {
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 24px;
+    border: 2px solid #B57F50;
+}
+
+.emblem-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #3d5a3d;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+}
+
+.emblem-guitar {
+    font-size: 36px;
+}
+
+.emblem-title {
+    margin: 0 0 6px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+}
+
+.emblem-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Questionnaire Answers Section */
+.answers-section {
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    padding: 24px;
+    border: 2px solid #B57F50;
+}
+
+.answers-title {
+    margin: 0 0 4px 0;
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+}
+
+.answers-subtitle {
+    font-size: 13px;
+    color: #444;
+    margin: 0 0 20px 0;
+}
+
+.answers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.answer-group {
+    margin-bottom: 20px;
+}
+
+.answer-group:last-child {
+    margin-bottom: 0;
+}
+
+.answer-group-label {
+    display: block;
+    font-size: 12px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+/* Technique Sliders */
+.technique-sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.technique-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.technique-name {
+    flex: 0 0 100px;
+    font-size: 14px;
+    color: #000;
+}
+
+.technique-slider {
+    flex: 1;
+    position: relative;
+}
+
+.slider-track {
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 4px;
+    position: relative;
+}
+
+.slider-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background-color: #5a7a5a;
+    border-radius: 4px;
+}
+
+.slider-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    background-color: #3d5a3d;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.technique-value {
+    flex: 0 0 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    text-align: right;
+}
+
+/* Skills List */
+.skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.skill-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #000;
+    padding: 6px 0;
+}
+
+.skill-tag span {
+    color: #3d5a3d;
+    font-weight: bold;
+}
+
+/* Answer Value */
+.answer-value {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    color: #000;
+}
+
+/* Error Message */
+.error-message {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.error-message p {
+    margin: 0;
+    font-size: 18px;
+    color: #555;
+}
+
+/* Skill Detail Popup */
+.skill-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.skill-popup {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 480px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.popup-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: background-color 0.2s;
+}
+
+.popup-close:hover {
+    background-color: #e0e0e0;
+}
+
+.popup-title {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #2d4a2d;
+}
+
+.popup-score {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #3d5a3d;
+}
+
+.popup-description {
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #444;
+}
+
+.popup-factors h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.factor-item {
+    background-color: #f5f7f5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+}
+
+.factor-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.factor-value {
+    display: block;
+    font-size: 14px;
+    color: #222;
+    font-weight: 500;
+}

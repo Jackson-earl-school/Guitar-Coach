@@ -15,9 +15,9 @@ function Dashboard() {
                     </div>
                     <nav className='navbar'>
                         <ul className='navbar-list'>
-                            <li><a href='/'>Coach</a></li>
+                            <li><a href='/practice-plans'>Coach</a></li>
                             <li><a href='/find-songs'>Find Songs</a></li>
-                            <li><a href='/'>Tasks</a></li>
+                            <li><a href='/schedule'>Tasks</a></li>
                             <li>
                                 <button onClick={() => { window.location.href = '/profile'; }} className="profile-button">
                                     Profile
@@ -65,7 +65,7 @@ function Dashboard() {
                 <div className="footer-container">
                     <div className="footer-section">
                         <div>
-                            <Link to="/" className='logo'>
+                            <Link to="/dashboard" className='logo'>
                                 GuitarCoach
                             </Link>
                         </div>

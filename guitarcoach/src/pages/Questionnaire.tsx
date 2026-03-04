@@ -11,15 +11,15 @@ const questions = [
     type: 'single'
     },
     {
-    id: 'play_style',
-    question: 'What type(s) of guitar do you play?',
-    options: ['Acoustic', 'Electric', 'Classical', 'Bass'],
+    id: 'learning_style',
+    question: 'Which of these can you use to learn a song? (Select all that apply)',
+    options: ['I learn by ear / watching videos', 'I can follow guitar tabs', 'I can read chord charts and diagrams', 'I understand keys, scales, and music theory', 'I can read standard notation'],
     type: 'multi'
     },
     {
-    id: 'technical skills',
+    id: 'technical_skills',
     question: 'Which of these can you comfortably play? (Select all that apply)',
-    options: ['Open chords (C, G, D, A, E, Am, etc.)', 'Barre chords (F, Bm, etc.)', 'Power chords', 'Basic strumming patterns', 'Fingerpicking patterns'],
+    options: ['Open chords (C, G, D, A, E, Am, etc.)', 'Barre chords (F, Bm, etc.)', 'Power chords', 'Basic strumming patterns', 'Fingerpicking patterns', 'Hoping to learn'],
     type: 'multi'
     },
     {
@@ -41,6 +41,12 @@ const questions = [
     type: 'input'
     },
     {
+    id: 'soloing',
+    question: 'How comfortable are you with lead guitar / soloing?',
+    options: ['I haven\'t tried it', 'I know a few licks or riffs', 'I can play solos from songs I\'ve learned', 'I can improvise over a chord progression'],
+    type: 'single'    
+    },
+    {
     id: 'preference',
     question: 'What styles are you most interested in?',
     options: ['Rock', 'Pop', 'Blues', 'Jazz', 'Metal', 'Acoustic / Folk', 'R&B / Neo-soul', 'Indie'],
@@ -58,12 +64,6 @@ const questions = [
     options: ['Becoming an advanced player', 'Performing or recording', 'Playing confidently with others', 'Playing songs for fun', 'Just staring out'],
     type: 'single'
     }
-    // },
-    // {
-    // id: 'favorite_artist',
-    // question: 'Who is your current favorite artist or band?',
-    // options: ['Bad Bunny']
-    // }
 ]
 
 function QuestionnairePage () {

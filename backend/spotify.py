@@ -97,6 +97,7 @@ async def spotify_login(request: Request):
         "redirect_uri": REDIRECT_URI,
         "scope": SCOPES,
         "state": token,
+        "show_dialog": "true",  # Force Spotify to show login screen so users can choose their own account
     })
 
     return RedirectResponse(f"https://accounts.spotify.com/authorize?{params}")
