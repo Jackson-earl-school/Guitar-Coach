@@ -137,6 +137,14 @@ export default function PracticePlanPage() {
           {error && <p className="error pp-error">{error}</p>}
         </div>
 
+        {/* loading spinner */}
+        {loading && (
+          <div className="loading-container">
+            <div className="spinner"></div>
+            <p className="loading-text">Generating your practice plan...</p>
+          </div>
+        )}
+
         {/* empty state */}
         {!result && !loading && (
           <div className="empty-recommendation">
@@ -146,27 +154,11 @@ export default function PracticePlanPage() {
 
         {/* results */}
         {result && (
-          <div className="pp-results">
-
-            {/* song information and weekly goal summary row */}
-            <div className="pp-summary-row">
-              <div className="info-box pp-summary-box">
-                <p className="pp-song-title">{result.song_title}</p>
-                <p className="pp-song-artist">{result.artist}</p>
-                <p className="pp-song-skill"><span className="pp-song-skill">skill level:</span> {result.skill_level}</p>
-              </div>
-              <div className="info-box pp-summary-box pp-goal-box">
-                <p className="pp-section-label">Weekly Goal</p>
-                <p className="pp-goal-description">{result.weekly_goal.description}</p>
-                <p className="pp-section-label">Milestones</p>
-                {result.weekly_goal.milestones.map((m, i) => (
-                  <p key={i} className="pp-milestone">✓ {m}</p>
-                ))}
-              </div>
-            </div>
-
-            {/* days separated in 7 columns */}
-            <div className="pp-calendar">
+          <div className="pp-results" onClick={() => setExpandedTask(null)}>
+            {/* Main layout: calendar on left, summary on right */}
+            <div className="pp-main-layout">
+              {/* Calendar - main focus */}
+              <div className="pp-calendar">
               {result.days?.map((day, dayIndex) => (
                 <div key={day.day} className="pp-day-column">
 
@@ -182,11 +174,11 @@ export default function PracticePlanPage() {
                       const key = `${dayIndex}-${taskIndex}`
                       const isOpen = expandedTask === key
                       return (
-                        <div key={taskIndex} className="pp-task-card">
-                          {/* clickable and exandable title row */}
+                        <div key={taskIndex} className={`pp-task-card ${isOpen ? "pp-task-card--expanded" : ""}`}>
+                          {/* clickable and expandable title row */}
                           <div
                             className={`pp-task-title-row ${isOpen ? "pp-task-title-row--open" : ""}`}
-                            onClick={() => toggleTask(key)}
+                            onClick={(e) => { e.stopPropagation(); toggleTask(key) }}
                           >
                             <span className="pp-task-name">{task.title}</span>
                             <span className="pp-task-meta">
@@ -196,7 +188,7 @@ export default function PracticePlanPage() {
 
                           {/* expanded details */}
                           {isOpen && (
-                            <div className="pp-task-detail">
+                            <div className="pp-task-detail" onClick={(e) => e.stopPropagation()}>
                               <p className="pp-task-technique">{task.technique}</p>
 
                               <p className="pp-detail-label">Instructions</p>
@@ -216,8 +208,25 @@ export default function PracticePlanPage() {
 
                 </div>
               ))}
-            </div>
+              </div>
 
+              {/* Sidebar - weekly goal and milestones */}
+              <div className="pp-sidebar">
+                <div className="pp-sidebar-box">
+                  <p className="pp-sidebar-skill">
+                    <span className="pp-skill-label">Skill Level:</span> {result.skill_level}
+                  </p>
+
+                  <p className="pp-section-label">Weekly Goal</p>
+                  <p className="pp-goal-description">{result.weekly_goal.description}</p>
+
+                  <p className="pp-section-label">Milestones</p>
+                  {result.weekly_goal.milestones.map((m, i) => (
+                    <p key={i} className="pp-milestone">✓ {m}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </main>
