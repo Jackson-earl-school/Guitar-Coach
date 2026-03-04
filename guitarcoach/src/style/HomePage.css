@@ -1,6 +1,9 @@
 .homepage-header {
-    background-color: rgb(255, 255, 255);
-    height: 80px;
+    background-color: #fff;
+    padding: 15px 40px;
+    border-bottom: 3.75px solid #B57F50;
+    border-top: 3.75px solid #B57F50;
+    width: 100%;
 }
 
 .container {
