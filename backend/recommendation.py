@@ -11,7 +11,7 @@ from spotify import get_valid_spotify_token
 
 router = APIRouter(prefix="/api/recommendation")
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 class RecommendationRequest(BaseModel):         
     top_tracks: List[dict]
@@ -38,15 +38,18 @@ async def generate_recommendation(request: Request, body: RecommendationRequest)
         raise HTTPException(status_code=401, detail="Not Authenticate")
     
     # 2. Build context strings from music data
-    tracks_context = "\n".join([
-        f"- {track.get('name')} by {', '.join([a.get('name') for a in track.get('artists', [])])}"
-        for track in body.top_tracks[:10]
-    ])
+    def format_track(track: dict) -> str:
+        name = track.get('name')
+        artists = [a.get('name') for a in track.get('artists', [])]
+        return f"- {name} by {', '.join(artists)}"
 
-    artists_context = "\n".join([
-        f"- {artist.get('name')} (genres: ) {', '.join(artist.get('genres', [])[:3])}"
-        for artist in body.top_artists[:10]
-    ])
+    def format_artist(artist: dict) -> str:
+        name = artist.get('name')
+        genres = ', '.join(artist.get('genres', [])[:3])
+        return f"- {name} (genres: {genres})"
+
+    tracks_context = "\n".join(format_track(t) for t in body.top_tracks[:10])
+    artists_context = "\n".join(format_artist(a) for a in body.top_artists[:10])
 
     # 3. Handle difficulty adjustment
     target_difficulty = body.current_difficulty
@@ -92,24 +95,24 @@ async def generate_recommendation(request: Request, body: RecommendationRequest)
     
     # 5. Call openai
     try:
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a guitar song expert. "},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.8,    # Higher --> more creative/varied
-            max_tokens=500
-        )   
+            max_tokens=500      # Max output length
+        )
 
-        content = response.choices[0].message.content.strip()
+        content = response.choices[0].message.content.strip()       # gets the first response, the actual text, and removes whitespace
         # debug:
         print(f"OpenAI response: {content}")
-        # Clean up if GPT wrapped it in markdown code blocks                                                                                                       
-        if content.startswith("```"):                                                                                                                              
-            content = content.split("```")[1]                                                                                                                      
-            if content.startswith("json"):                                                                                                                         
-                content = content[4:]                                                                                                                              
+        # Clean up if GPT wrapped it in markdown code blocks
+        if content.startswith("```"):
+            content = content.split("```")[1]
+            if content.startswith("json"):
+                content = content[4:]
             content = content.strip()
 
 
@@ -185,7 +188,7 @@ async def generate_similar(request: Request, body: SimilarRequest):
         }} """
     # 5. Call openai
     try:
-        response = client.chat.completions.create(
+        response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a guitar song expert. Always respond with valid JSON only, no markdown code blocks"},
@@ -193,16 +196,16 @@ async def generate_similar(request: Request, body: SimilarRequest):
             ],
             temperature=0.8,    # Higher --> more creative/varied
             max_tokens=500
-        )   
+        )
 
         content = response.choices[0].message.content.strip()
         # debug:
         print(f"OpenAI response: {content}")
-        # Clean up if GPT wrapped it in markdown code blocks                                                                                                       
-        if content.startswith("```"):                                                                                                                              
-            content = content.split("```")[1]                                                                                                                      
-            if content.startswith("json"):                                                                                                                         
-                content = content[4:]                                                                                                                              
+        # Clean up if GPT wrapped it in markdown code blocks
+        if content.startswith("```"):
+            content = content.split("```")[1]
+            if content.startswith("json"):
+                content = content[4:]
             content = content.strip()
 
 
@@ -258,13 +261,17 @@ async def search_spotify_for_song(request: Request, song_name: str, artist_name:
         return {"found": False, "preview_url": None, "album_image": None, "spootify_id": None}
     
     matching_track = None
-    artist_name_lower = artist_name.lower()
 
+    target_artist = artist_name.lower()
+
+    # check each track from the search results
     for track in tracks:
-        track_artists = [a.get("name", "").lower() for a in track.get("artists", [])]
-        if any(artist_name_lower in artist or artist in artist_name_lower for artist in track_artists):
-            matching_track = track
-            break
+        track_artists = [a.get("name", "").lower() for a in track.get("artists", [])]                       # all artists names for the track
+        
+        for artist in track_artists:
+            if target_artist in artist or artist in target_artist:
+                matching_track = track
+                break
     
     if not matching_track:
         matching_track = tracks[0]
