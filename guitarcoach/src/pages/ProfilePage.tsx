@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { supabase } from "../supabaseClient"
-import "../style/LoginPage.css"
+import "../style/Profilepage.css"
 
 const API_BASE = "http://127.0.0.1:8000"
 
@@ -71,20 +71,30 @@ export default function ProfilePage() {
     }
 
     return (
-        <div>
-            <h1>Profile</h1>
-            <p><b>Username:</b> {username}</p>
-            <button onClick={logout}>Log out</button>
+        <div className="profile-page">
+            <div className="profile-header">
+                <button onClick={() => window.location.href = '/dashboard'} className="back-button">Back to Dashboard</button>
+                <h1> Profile </h1>
+            </div>
 
-            <button onClick={() => window.location.href = '/dashboard'}>Back to Dashboard</button>
+            <div className="profile-body">
+                <p><b>Username:</b> {username}</p>
 
-            {spotifyConnected ? (
-                <>
-                    <p>Spotify Connected</p>
-                </>
-            ) : (
-                <button onClick={connectSpotify}>Connect Spotify</button>
-            )}
+                <div className="spotify-status">
+                    Spotify Status:
+                    {spotifyConnected ? (
+                        <>
+                            <p>Spotify Connected</p>
+                        </>
+                    ) : (
+                        <button onClick={connectSpotify}>Connect Spotify</button>
+                    )}
+                </div>
+
+                <div className="account-management">
+                    <button onClick={logout} className="log-out">Log out</button>
+                </div>
+            </div>
         </div>
     )
 }
