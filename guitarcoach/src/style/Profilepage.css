@@ -1,79 +1,360 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 .profile-page {
+    font-family: 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    min-height: 100vh;
+    background-color: #f7f4f0;
 }
 
-.profile-page .back-button {
-    background-color: #f3f5e2;
-    border: 2px solid #000;
-    border-radius: 50px;
-    padding: 8px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    position: fixed;
-    top: 0;
-    left: 0;
-    margin: 20px;
+.profile-page .navbar {
+    padding: 0.75rem 2rem;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.profile-page .back-button:hover {
+.profile-page .navbar-brand {
+    color: rgb(0, 0, 0) !important;
+}
+
+.profile-page .navbar-nav .nav-link {
+    color: #333;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.profile-page .navbar-nav .nav-link:hover,
+.profile-page .navbar-nav .nav-link.active {
+    color: #000;
     background-color: #f0f0f0;
 }
 
-.profile-header {
-    background-color: #fff;
-    padding: 15px 40px;
-    border-bottom: 3.75px solid #B57F50;
-    border-top: 3.75px solid #B57F50;
-    width: 100%;
+.profile-hero {
+    background-color: #B57F50;
+    padding: 3rem 5%;
     display: flex;
-    justify-content: center;
-    height: 75px;
-}
-
-.profile-body {
-    background-color: #9cb99c;
-    padding: 20px;
-    border-radius: 10px;
-    margin-top: 50px;
-    width: 200vh;
-    height: 50vh;
-    position: relative;
-}
-
-.spotify-status {
-    margin: 20px;
-}
-
-.spotify-status button {
-    background-color: #1DB954;
-    border: none;
-    border-radius: 50px;
-    padding: 8px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    color: white;
-    margin-left: 5%;
-}
-
-.profile-body .account-management {
-    display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
+    gap: 0.5rem;
 }
 
-.log-out {
-    background-color: red;
-    border: 2px solid #000;
-    border-radius: 50px;
-    padding: 8px 20px;
-    font-size: 14px;
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 3px solid rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.profile-hero-name {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    color: #fff;
+}
+
+.profile-hero-email {
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.profile-main {
+    flex: 1;
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.profile-card {
+    background-color: #fff;
+    border-radius: 14px;
+    padding: 1.75rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.profile-card-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #B57F50;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f0ece4;
+}
+
+.profile-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.profile-field-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #666;
+    flex-shrink: 0;
+}
+
+.profile-field-value {
+    font-size: 0.9rem;
+    color: #222;
+    font-weight: 400;
+}
+
+.profile-badge {
+    background-color: #f0ece4;
+    color: #B57F50;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 3px 12px;
+    border-radius: 20px;
+    text-transform: capitalize;
+}
+
+.profile-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.profile-input {
+    padding: 7px 14px;
+    font-size: 0.875rem;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 180px;
+}
+
+.profile-input:focus {
+    border-color: #B57F50;
+    box-shadow: 0 0 0 3px rgba(181, 127, 80, 0.15);
+}
+
+.profile-save-msg {
+    font-size: 0.8rem;
+    color: #2a9d5c;
+    margin: 0;
+}
+
+.profile-btn-edit {
+    background: none;
+    border: 1px solid #B57F50;
+    color: #B57F50;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.8rem;
+    font-family: 'Poppins', sans-serif;
     cursor: pointer;
-    margin-top: 20px;
-    color: white;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.profile-btn-edit:hover {
+    background-color: #B57F50;
+    color: #fff;
+}
+
+.profile-btn-save {
+    background-color: #B57F50;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 0.8rem;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.profile-btn-save:hover:not(:disabled) {
+    background-color: #a06d42;
+}
+
+.profile-btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.profile-btn-cancel {
+    background: none;
+    border: 1px solid #ccc;
+    color: #888;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.8rem;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.profile-btn-cancel:hover {
+    border-color: #999;
+    color: #555;
+}
+
+.profile-btn-secondary {
+    align-self: flex-start;
+    background: none;
+    border: 1px solid #B57F50;
+    color: #B57F50;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 0.82rem;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.profile-btn-secondary:hover {
+    background-color: #B57F50;
+    color: #fff;
+}
+
+.profile-spotify-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1rem;
+}
+
+.profile-spotify-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.profile-spotify-icon {
+    font-size: 1.4rem;
+}
+
+.profile-spotify-info strong {
+    display: block;
+    font-size: 0.9rem;
+    color: #222;
+}
+
+.profile-spotify-status {
+    font-size: 0.78rem;
+    color: #999;
+    font-weight: 300;
+    margin: 0;
+}
+
+.profile-connected-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1DB954;
+    background-color: rgba(29, 185, 84, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.profile-btn-spotify {
+    background-color: #1DB954;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 0.82rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.profile-btn-spotify:hover {
+    background-color: #18a349;
+}
+
+/* ── Danger zone ── */
+.profile-card-danger {
+    border: 1px solid #fde8e8;
+}
+
+.profile-card-danger .profile-card-title {
+    color: #c0392b;
+    border-bottom-color: #fde8e8;
+}
+
+.profile-danger-text {
+    font-size: 0.85rem;
+    color: #888;
+    font-weight: 300;
+}
+
+.profile-btn-logout {
+    align-self: flex-start;
+    background-color: #fff;
+    border: 1.5px solid #e74c3c;
+    color: #e74c3c;
+    border-radius: 20px;
+    padding: 7px 22px;
+    font-size: 0.85rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.profile-btn-logout:hover {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.profile-footer {
+    padding: 1.5rem 2rem;
+    font-size: 0.8rem;
+}
+
+.profile-footer span {
+    color: #555 !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    .profile-main {
+        padding: 1.5rem 1rem;
+    }
+
+    .profile-card {
+        padding: 1.25rem;
+    }
+
+    .profile-field {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-spotify-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
