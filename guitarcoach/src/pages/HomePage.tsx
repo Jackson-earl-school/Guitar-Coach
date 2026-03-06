@@ -1,10 +1,10 @@
-import features1 from '../images/features1.jpg'
-import features2 from '../images/features2.jpg'
-import features3 from '../images/features3.jpg'
-
 import "bootstrap/dist/css/bootstrap.css"
 import '../style/HomePage.css'
 import "bootstrap/dist/js/bootstrap.bundle.min.js"
+
+import features1 from '../images/features1.jpg'
+import features2 from '../images/features2.jpg'
+import features3 from '../images/features3.jpg'
 
 function HomePage() {
     return (
