@@ -91,10 +91,10 @@ export default function ProfilePage() {
                     </button>
                     <div className="collapse navbar-collapse" id="profileNavbar">
                         <ul className="navbar-nav justify-content-end w-100">
-                            <li className="nav-item"><a className="nav-link" href="/practice-plans">Coach</a></li>
-                            <li className="nav-item"><a className="nav-link" href="/find-songs">Find Songs</a></li>
-                            <li className="nav-item"><a className="nav-link" href="/schedule">Tasks</a></li>
-                            <li className="nav-item"><a className="nav-link active" href="/profile">Profile</a></li>
+                            <li className="nav-item"><a className="nav-link" href="/practice-plans"> Coach </a></li>
+                            <li className="nav-item"><a className="nav-link" href="/find-songs"> Find Songs </a></li>
+                            <li className="nav-item"><a className="nav-link" href="/schedule"> Tasks </a></li>
+                            <li className="nav-item"><a className="nav-link active" aria-current="page" href="/profile"> Profile </a></li>
                         </ul>
                     </div>
                 </div>

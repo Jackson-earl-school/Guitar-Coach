@@ -31,10 +31,12 @@
     transition: color 0.2s, background-color 0.2s;
 }
 
-.profile-page .navbar-nav .nav-link:hover,
-.profile-page .navbar-nav .nav-link.active {
-    color: #000;
+.profile-page .navbar-nav .nav-link:hover {
     background-color: #f0f0f0;
+}
+
+.profile-page .navbar-nav .nav-link.active {
+    color: black;
 }
 
 .profile-hero {
