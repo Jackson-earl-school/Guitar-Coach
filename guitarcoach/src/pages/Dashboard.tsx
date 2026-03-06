@@ -13,19 +13,13 @@ import module4 from "../images/tasks.webp"
 const API_BASE = "http://127.0.0.1:8000"
 
 function Dashboard() {
-    const [username, setUsername] = useState<string>("")
+    const [username, setUsername] = useState("")
     const [spotifyConnected, setSpotifyConnected] = useState<boolean | null>(null)
 
     useEffect(() => {
         const fetchUser = async () => {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
-
-            const displayName =
-                user.user_metadata?.username ||
-                user.email?.split("@")[0] ||
-                "Guitarist"
-            setUsername(displayName)
 
             const { data: profile } = await supabase
                 .from("profiles")
@@ -76,8 +70,8 @@ function Dashboard() {
             <section className="dashboard-welcome">
                 <div className="dashboard-welcome-content">
                     <p className="dashboard-eyebrow">Welcome back</p>
-                    <h1 className="dashboard-username">
-                        {username ? `${username}'s Dashboard` : "Your Dashboard"}
+                    <h1 className="dashboard-your-dashboard">
+                        Your Dashboard
                     </h1>
                     <p className="dashboard-sub">Pick up where you left off.</p>
                 </div>
