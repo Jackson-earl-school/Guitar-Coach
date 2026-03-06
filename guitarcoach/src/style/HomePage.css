@@ -1,167 +1,118 @@
-.homepage-header {
-    background-color: #fff;
-    padding: 15px 40px;
-    border-bottom: 3.75px solid #B57F50;
-    border-top: 3.75px solid #B57F50;
-    width: 100%;
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-.container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    font-size: 15px;
-    font-weight: bold;
-    text-decoration: none;
-    color: inherit;
-}
-
-.navbar {
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 30px;
-}
-
-.navbar-list {
-    list-style-type: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-}
-
-.navbar-list li a {
-    display: block;
-    color: black;
-    padding: 10px 15px;
-    text-decoration: none;
-}
-
-.login {
-    background-color: #B57F50;
-    color: black;
-    border: none;
-    text-align: center;
-    font-weight: bold;
-    display: inline-block;
-    cursor: pointer;
-    border-radius: 50px;
-    padding: 10px 18px;
-}
-
-.login:hover {
-    background-color: #A66E45;
-}
-
-.main-home {
+.home-page {
+    font-family: 'Poppins', sans-serif;
     display: flex;
     flex-direction: column;
-    padding-left: 40px;
+    min-height: 100vh;
 }
 
-.main-home-title {
-    font-size: 48px;
-    font-weight: bold;
-    margin-top: 40px;
+.home-page .navbar {
+    padding: 0.75rem 2rem;
 }
 
-.main-home-body {
-    font-size: 20px;
-    margin-top: 20px;
+.home-page .navbar-brand {
+    color: rgb(0, 0, 0) !important;
+}
+
+.home-page .navbar-nav .nav-item .nav-link:hover {
+    color: black;
+    background-color: #f0f0f0;
+}
+
+.home-page .guitarcoach-intro {
+    min-height: 100vh;
+    background-image: url('../images/home-page-cover.png');
+    background-position: 100% 0;
+    background-repeat: no-repeat;
+    background-size: cover;
     display: flex;
-    max-width: 800px;
+    flex-direction: column;
 }
 
-.get-started {
-    background-color: #B57F50;
-    border: none;
-    color: rgb(0, 0, 0);
-    font-weight: bold;
-    text-align: center;
-    display: inline-block;
-    cursor: pointer;
-    border-radius: 50px;
-    padding: 15px 30px;
-    font-size: 18px;
-    margin-top: 30px;
-}
-
-.get-started:hover {
-    background-color: #A66E45;
-}
-
-.guitar-image {
-    margin-top: 50px;
-    text-align: center;
-}
-
-.home {
-    height: auto;
-    width: 97%;
-    border-radius: 5px;
-}
-
-.features-section {
+.home-page .intro-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
+    margin-left: 5%;
+    padding: 20px;
+    text-align: left;
+    color: white;
+    max-width: 70vh;
 }
 
-.features {
-    margin-top: 80px;
-    font-size: 32px;
-    font-weight: bold;
-    max-width: 400px;
-    padding-left: 40px;
+.home-page .intro-content .get-started {
+    background-color: #B57F50;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 10px 30px;
 }
 
-.features-list {
+.home-page .intro-content .get-started:hover {
+    background-color: #A66E40;
+    color: white;
+}
+
+.home-page .guitarcoach-features {
+    background-color: #f7f4f0;
+    padding: 60px 20px 80px;
+}
+
+.home-page .features-title {
+    font-size: 2.5em;
+    text-align: left;
+    padding: 40px 0 20px 5%;
+}
+
+.home-page .features-list {
     display: flex;
-    gap: 80px;
+    gap: 40px;
     justify-content: center;
     flex-wrap: wrap;
 }
 
-.feature-item {
+.home-page .feature-item {
     padding-top: 30px;
     display: flex;
     flex-direction: column;
+    max-width: 300px;
 }
 
-.feature-item-photo {
+.home-page .feature-item-photo {
     border-radius: 5px;
     display: flex;
     justify-content: center;
-    width: 400px;
-    height: 400px;
     overflow: hidden;
 }
 
-.feature-item-photo img {
-    height: auto;
+.home-page .feature-item-photo img {
     width: 100%;
+    height: auto;
     object-fit: cover;
 }
 
-.feature-item-title {
-    font-weight: bold;
-    padding-top: 15px;
-    justify-content: center;
-    width: auto;
-    max-width: 100%;
-}
-
-.feature-item-body {
+.home-page .feature-item-title {
+    font-size: 1.5em;
     margin-top: 10px;
-    font-size: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-    max-width: 400px;
+    text-align: center;
 }
 
-.home-footer {
-    background-color: white;
-    padding: 50px 20px;
-    margin-top: 50px;
+.home-page .feature-item-body {
+    margin-top: 10px;
+}
+
+.home-page .home-footer {
+    padding: 1.5rem 2rem;
+    font-size: 0.8rem;
+}
+
+.home-page span {
+    color: #555 !important;
 }

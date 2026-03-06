@@ -1,17 +1,20 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { supabase } from '../supabaseClient'
-import '../style/LoginPage.css'
+import { useState } from "react"
+import { useNavigate, Link } from "react-router-dom"
+import { supabase } from "../supabaseClient"
+
+import "bootstrap/dist/css/bootstrap.css"
+import "../style/LoginPage.css"
+import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 function LoginPage() {
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
+    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
     const [isSignUp, setIsSignUp] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const navigate = useNavigate()
-    
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -26,13 +29,13 @@ function LoginPage() {
             }
 
             const { data, error } = await supabase.auth.signUp({
-               email, 
-               password, 
-               options: {
-                data: { 
-                  username: cleanUsername 
+                email,
+                password,
+                options: {
+                    data: {
+                        username: cleanUsername
+                    }
                 }
-              }
             })
 
             if (error) {
@@ -60,52 +63,75 @@ function LoginPage() {
         // Changed to check if a user has completed the quesitonniare yet
 
         const { data: profile } = await supabase
-          .from('profiles')
-          .select('has_completed_questionnaire')
-          .eq('id', loginData.user?.id)
-          .single()
-        
-        if (profile?.has_completed_questionnaire){
-          navigate("/dashboard")
+            .from("profiles")
+            .select("has_completed_questionnaire")
+            .eq("id", loginData.user?.id)
+            .single()
+
+        if (profile?.has_completed_questionnaire) {
+            navigate("/dashboard")
         } else {
-          navigate("/questionnaire")
+            navigate("/questionnaire")
         }
 
     }
 
     return (
-        <div className="login-page">
-            <header className="login-header">
-                <div className='container'>
-                    <div className='logo'>
-                        <Link to="/" className='logo'>
-                            GuitarCoach
-                        </Link>
-                    </div>
+       <div className="login-page">
+            <nav className="navbar navbar-expand-lg">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="/"> GuitarCoach </a>
                 </div>
-            </header>
+            </nav>
 
-            <main>
-                <div className='account-container'>
-                    <div className='create-account-login-title'>
-                        <h1 className="create-account-login-title">
-                            {isSignUp ? 'Create Account' : 'Log In'}
-                        </h1>
+            <section className="login-section">
+                <div className="login-card">
+                    <div className="login-card-image">
+                        <span className="login-card-image-label"></span>
                     </div>
 
-                    <div className='form-container'>
-                        <form onSubmit={handleSubmit} className='create-account'>
-                            {isSignUp && ( // prompt for username only on sign up
+                    <div className="login-card-form">
+                        <div>
+                            <h1 className="login-card-title">
+                                {isSignUp ? "Create Account" : "Welcome Back"}
+                            </h1>
+                            <p className="login-card-subtitle">
+                                {isSignUp ? "Join GuitarCoach and start your journey." : "Log in to continue your practice."}
+                            </p>
+                        </div>
+
+                        <ul className="nav nav-pills nav-justified" id="pills-tab" role="tablist">
+                            <li className="nav-item" role="presentation">
+                                <button
+                                    className={`nav-link ${!isSignUp ? "active" : ""}`}
+                                    type="button"
+                                    onClick={() => { setIsSignUp(false); setError("") }}
+                                >
+                                    Log In
+                                </button>
+                            </li>
+                            <li className="nav-item" role="presentation">
+                                <button
+                                    className={`nav-link ${isSignUp ? "active" : ""}`}
+                                    type="button"
+                                    onClick={() => { setIsSignUp(true); setError("") }}
+                                >
+                                    Sign Up
+                                </button>
+                            </li>
+                        </ul>
+
+                        <form onSubmit={handleSubmit} className="create-account">
+                            {isSignUp && (
                                 <input
                                     type="text"
                                     placeholder="Username"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     required
-                                    minLength={6} // create minimum length for username
+                                    minLength={6}
                                 />
                             )}
-
                             <input
                                 type="email"
                                 placeholder="Email"
@@ -113,38 +139,25 @@ function LoginPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
-
                             <input
                                 type="password"
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                minLength={6} // create minimum length for password
+                                minLength={6}
                             />
                             {error && <p className="error">{error}</p>}
-                            <button type="submit" className='submit-auth' disabled={isSubmitting}>
-                                {isSubmitting ? 'Please wait...' : (isSignUp ? 'Sign Up' : 'Log In')}
+                            <button type="submit" className="submit-auth" disabled={isSubmitting}>
+                                {isSubmitting ? "Please wait..." : (isSignUp ? "Sign Up" : "Log In")}
                             </button>
                         </form>
-
-                        <button type="button" className="toggle-auth" onClick={() => setIsSignUp(!isSignUp)}>
-                            {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
-                        </button>
                     </div>
                 </div>
-            </main>
+            </section>
 
-            <footer className="login-footer">
-                <div className="footer-container">
-                    <div className="footer-section">
-                        <div>
-                            <Link to="/" className='logo'>
-                                GuitarCoach
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+            <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top login-footer">
+                <span className="mb-3 mb-md-0">© 2026 GuitarCoach, Inc</span>
             </footer>
         </div>
     )
