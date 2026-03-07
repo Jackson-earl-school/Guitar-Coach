@@ -1,108 +1,161 @@
- .progress-page {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-family: Arial, sans-serif;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
- 
- /* ------------ Header ------------- */
-
-.dashboard-header {
-    background-color: #fff;
-    padding: 15px 40px;
-    border-bottom: 3.75px solid #B57F50;
-    border-top: 3.75px solid #B57F50;
-}
-
-.dashboard-header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.dashboard-header .logo {
-    font-size: 15px;
-    font-weight: bold;
-}
-
-.dashboard-header .navbar-list {
-    list-style-type: none;
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+/* ── Base ── */
+.progress-page {
+    font-family: 'Poppins', sans-serif;
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.dashboard-header .navbar-list li a {
-    display: block;
-    color: black;
-    padding: 10px 15px;
-    text-decoration: none;
+/* ── Navbar ── */
+.progress-page .navbar {
+    padding: 0.75rem 2rem;
 }
 
-.dashboard-header .profile-button {
-    background-color: #f3f5e2;
-    border: 2px solid #000;
-    border-radius: 50px;
-    padding: 8px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.progress-page .navbar-brand {
+    color: #000 !important;
 }
 
-.dashboard-header .profile-button:hover {
+.progress-page .navbar-nav .nav-link {
+    color: #333;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.progress-page .navbar-nav .nav-link:hover {
     background-color: #f0f0f0;
 }
 
-/* Main Dashboard Area */
+.progress-page .navbar-nav .nav-link.active {
+    color: black;
+}
+
+/* ── Hero greeting ── */
+.progress-hero {
+    background-color: #B57F50;
+    padding: 2.5rem 5%;
+}
+
+.progress-hero-content {
+    max-width: 700px;
+}
+
+.progress-eyebrow {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 0.35rem;
+}
+
+.progress-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 0.4rem 0;
+    line-height: 1.15;
+}
+
+.progress-sub {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+/* ── Main ── */
 .progress-main {
     flex: 1;
-    background-color: #9cb99c;
-    padding: 50px 80px;
+    padding: 2.5rem 5%;
+    min-width: 0;
+    overflow-x: hidden;
+    background-color: #f7f4f0;
 }
 
-.page-title {
-    font-size: 32px;
-    font-weight: bold;
-    color: #000;
-    margin: 0 0 25px 0;
+/* ── Loading ── */
+.progress-loading {
+    font-size: 0.9rem;
+    color: #888;
+    padding: 2rem 0;
 }
 
-/* Two-Column Layout */
+.progress-error {
+    background-color: #fff;
+    border-radius: 14px;
+    padding: 2.5rem;
+    text-align: center;
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* ── Two-column layout ── */
 .progress-content {
     display: flex;
-    justify-content: space-between;
-    gap: 60px;
+    gap: 1.75rem;
     align-items: flex-start;
 }
 
-/* Left Column - Radar Section */
 .radar-section {
     flex: 2;
-    max-width: 55%;
+    min-width: 0;
 }
 
-.radar-title {
-    margin: 0 0 4px 0;
-    font-size: 24px;
-    font-weight: bold;
-    color: #000;
+.profile-section {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
-.radar-subtitle {
-    margin: 0 0 8px 0;
-    color: #333;
-    font-size: 14px;
+/* ── Shared card ── */
+.progress-card {
+    background-color: #fff;
+    border-radius: 14px;
+    padding: 1.75rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 1.25rem;
 }
 
+.progress-card:last-child {
+    margin-bottom: 0;
+}
+
+.progress-card-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #B57F50;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f0ece4;
+    margin-bottom: 0.5rem;
+}
+
+.progress-card-subtitle {
+    font-size: 0.78rem;
+    color: #aaa;
+    font-weight: 300;
+    margin-bottom: 1rem;
+}
+
+/* ── Radar chart ── */
 .radar-chart-wrapper {
     width: 100%;
-    height: 550px;
 }
 
-/* Remove focus outline from chart */
 .radar-chart-wrapper svg,
 .radar-chart-wrapper svg *,
 .radar-chart-wrapper .recharts-wrapper,
@@ -115,173 +168,141 @@
     outline: none !important;
 }
 
-/* Skill Bars */
+/* ── Skill bars ── */
 .skill-bars {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
 }
 
 .skill-bar-item {
     display: flex;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 6px;
-    padding: 10px 14px;
+    gap: 0.75rem;
 }
 
 .skill-bar-label {
     flex: 0 0 120px;
-    font-weight: bold;
-    color: #000;
-    font-size: 14px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #444;
 }
 
 .skill-bar-track {
     flex: 1;
-    height: 100%;
-    background-color: transparent;
-    border-radius: 4px;
-    margin: 0 12px;
-    position: relative;
+    height: 7px;
+    background-color: #f0ece4;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .skill-bar-fill {
-    position: absolute;
-    left: -132px;
-    top: -10px;
-    bottom: -10px;
-    background-color: rgba(157, 183, 157, 0.6);
-    border-radius: 6px 0 0 6px;
-    z-index: -1;
+    height: 100%;
+    background-color: #B57F50;
+    border-radius: 10px;
+    transition: width 0.6s ease;
 }
 
 .skill-bar-value {
-    flex: 0 0 50px;
+    flex: 0 0 38px;
     text-align: right;
-    font-weight: bold;
-    color: #000;
-    font-size: 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #B57F50;
 }
 
-/* Right Column - Profile Section */
-.profile-section {
-    flex: 1;
-    max-width: 45%;
-}
-
-/* Player Type Emblem */
-.player-emblem {
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 12px;
-    padding: 30px;
+/* ── Player emblem card ── */
+.player-emblem-card {
     text-align: center;
-    margin-bottom: 24px;
-    border: 2px solid #B57F50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    border-top: 3px solid #B57F50;
 }
 
 .emblem-icon {
-    width: 80px;
-    height: 80px;
-    background-color: #3d5a3d;
+    font-size: 2.5rem;
+    width: 72px;
+    height: 72px;
+    background-color: #f0ece4;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 16px auto;
-}
-
-.emblem-guitar {
-    font-size: 36px;
+    margin-bottom: 0.25rem;
 }
 
 .emblem-title {
-    margin: 0 0 6px 0;
-    font-size: 24px;
-    font-weight: bold;
-    color: #000;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #222;
 }
 
 .emblem-subtitle {
-    margin: 0;
-    font-size: 14px;
-    color: #333;
+    font-size: 0.78rem;
+    color: #aaa;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
-/* Questionnaire Answers Section */
-.answers-section {
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 12px;
-    padding: 24px;
-    border: 2px solid #B57F50;
-}
-
-.answers-title {
-    margin: 0 0 4px 0;
-    font-size: 20px;
-    font-weight: bold;
-    color: #000;
-}
-
-.answers-subtitle {
-    font-size: 13px;
-    color: #444;
-    margin: 0 0 20px 0;
-}
-
+/* ── Answers ── */
 .answers-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 1.1rem;
+    margin-top: 0.5rem;
 }
 
 .answer-group {
-    margin-bottom: 20px;
-}
-
-.answer-group:last-child {
-    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
 }
 
 .answer-group-label {
-    display: block;
-    font-size: 12px;
-    color: #333;
+    font-size: 0.7rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: #aaa;
 }
 
-/* Technique Sliders */
+.answer-value {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #333;
+}
+
+/* ── Technique sliders ── */
 .technique-sliders {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.6rem;
 }
 
 .technique-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
 }
 
 .technique-name {
-    flex: 0 0 100px;
-    font-size: 14px;
-    color: #000;
+    flex: 0 0 90px;
+    font-size: 0.78rem;
+    color: #555;
 }
 
 .technique-slider {
     flex: 1;
-    position: relative;
 }
 
 .slider-track {
-    height: 8px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 4px;
+    height: 7px;
+    background-color: #f0ece4;
+    border-radius: 10px;
     position: relative;
 }
 
@@ -290,83 +311,51 @@
     left: 0;
     top: 0;
     height: 100%;
-    background-color: #5a7a5a;
-    border-radius: 4px;
+    background-color: #B57F50;
+    border-radius: 10px;
 }
 
 .slider-thumb {
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 16px;
-    height: 16px;
-    background-color: #3d5a3d;
+    width: 14px;
+    height: 14px;
+    background-color: #B57F50;
     border-radius: 50%;
     border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
 }
 
 .technique-value {
-    flex: 0 0 20px;
-    font-size: 14px;
+    flex: 0 0 18px;
+    font-size: 0.78rem;
     font-weight: 600;
-    color: #000;
+    color: #B57F50;
     text-align: right;
 }
 
-/* Skills List */
-.skills-list {
+/* ── Skills tags ── */
+.skills-tags {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-wrap: wrap;
+    gap: 0.4rem;
 }
 
 .skill-tag {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #000;
-    padding: 6px 0;
-}
-
-.skill-tag span {
-    color: #3d5a3d;
-    font-weight: bold;
-}
-
-/* Answer Value */
-.answer-value {
-    display: block;
-    font-size: 15px;
+    background-color: #f0ece4;
+    color: #B57F50;
+    font-size: 0.75rem;
     font-weight: 500;
-    color: #000;
+    padding: 3px 10px;
+    border-radius: 20px;
 }
 
-/* Error Message */
-.error-message {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 40px;
-    text-align: center;
-    max-width: 500px;
-    margin: 0 auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.error-message p {
-    margin: 0;
-    font-size: 18px;
-    color: #555;
-}
-
-/* Skill Detail Popup */
+/* ── Skill popup ── */
 .skill-popup-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    inset: 0;
+    background-color: rgba(0,0,0,0.45);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -376,86 +365,124 @@
 .skill-popup {
     background-color: #fff;
     border-radius: 16px;
-    padding: 32px;
-    max-width: 480px;
+    padding: 2rem;
+    max-width: 460px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
 }
 
 .popup-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 32px;
-    height: 32px;
+    top: 1rem;
+    right: 1rem;
+    width: 30px;
+    height: 30px;
     border: none;
-    background-color: #f0f0f0;
+    background-color: #f0ece4;
     border-radius: 50%;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #666;
+    color: #888;
     transition: background-color 0.2s;
 }
 
 .popup-close:hover {
-    background-color: #e0e0e0;
+    background-color: #e0d8d0;
 }
 
 .popup-title {
-    margin: 0 0 8px 0;
-    font-size: 24px;
-    font-weight: bold;
-    color: #2d4a2d;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 0.35rem;
 }
 
 .popup-score {
-    margin: 0 0 16px 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #3d5a3d;
+    font-size: 0.9rem;
+    color: #B57F50;
+    margin-bottom: 1rem;
+}
+
+.popup-score strong {
+    font-size: 1rem;
 }
 
 .popup-description {
-    margin: 0 0 24px 0;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #444;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: #555;
+    margin-bottom: 1.25rem;
 }
 
 .popup-factors h4 {
-    margin: 0 0 12px 0;
-    font-size: 14px;
+    font-size: 0.7rem;
     font-weight: 600;
-    color: #333;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.1em;
+    color: #aaa;
+    margin-bottom: 0.75rem;
 }
 
 .factor-item {
-    background-color: #f5f7f5;
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 10px;
+    background-color: #fdf8f3;
+    border: 1px solid #f0ece4;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .factor-label {
     display: block;
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.06em;
+    color: #bbb;
+    margin-bottom: 3px;
 }
 
 .factor-value {
     display: block;
-    font-size: 14px;
-    color: #222;
+    font-size: 0.85rem;
+    color: #333;
     font-weight: 500;
+}
+
+/* ── Footer ── */
+.progress-footer {
+    padding: 1.5rem 2rem;
+    font-size: 0.8rem;
+}
+
+.progress-footer span {
+    color: #555 !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .progress-content {
+        flex-direction: column;
+    }
+
+    .radar-section,
+    .profile-section {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .progress-main {
+        padding: 1.5rem 4%;
+    }
+
+    .skill-bar-label {
+        flex: 0 0 90px;
+    }
 }
