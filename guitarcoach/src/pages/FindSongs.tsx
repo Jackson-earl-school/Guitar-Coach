@@ -5,7 +5,6 @@ import "bootstrap/dist/css/bootstrap.css"
 import "../style/FindSongs.css"
 import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
-
 interface SpotifyTrack {
     id: string
     name: string
