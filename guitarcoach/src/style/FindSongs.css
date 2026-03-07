@@ -419,6 +419,13 @@
     flex-wrap: wrap;
 }
 
+/* ── Spotify embed iframe ── */
+.fs-spotify-embed {
+    border-radius: 12px;
+    border: none;
+    min-width: 280px;
+}
+
 /* ── Difficulty ── */
 .fs-difficulty {
     display: flex;
@@ -543,16 +550,6 @@
 .fs-empty strong {
     color: #555;
     font-weight: 500;
-}
-
-/* ── Footer ── */
-.fs-footer {
-    padding: 1.5rem 2rem;
-    font-size: 0.8rem;
-}
-
-.fs-footer span {
-    color: #555 !important;
 }
 
 /* ── Responsive ── */
