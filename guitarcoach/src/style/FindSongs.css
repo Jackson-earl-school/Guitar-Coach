@@ -1,512 +1,596 @@
-.dashboard-page {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-family: Arial, sans-serif;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-/* Header */
-.dashboard-header {
-    background-color: #fff;
-    padding: 15px 40px;
-    border-bottom: 3.75px solid #B57F50;
-    border-top: 3.75px solid #B57F50;
-}
-
-.dashboard-header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.dashboard-header .logo {
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.dashboard-header .navbar-list {
-    list-style-type: none;
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+/* ── Base ── */
+.find-songs-page {
+    font-family: 'Poppins', sans-serif;
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f7f4f0;
 }
 
-.dashboard-header .navbar-list li a {
-    display: block;
-    color: black;
-    padding: 10px 15px;
-    text-decoration: none;
+/* ── Navbar ── */
+.find-songs-page .navbar {
+    padding: 0.75rem 2rem;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.dashboard-header .profile-button {
-    background-color: #f3f5e2;
-    border: 2px solid #000;
-    border-radius: 50px;
-    padding: 8px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.find-songs-page .navbar-brand {
+    color: rgb(0, 0, 0) !important;
 }
 
-.dashboard-header .profile-button:hover {
+.find-songs-page .navbar-nav .nav-link {
+    color: #333;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.find-songs-page .navbar-nav .nav-link:hover {
     background-color: #f0f0f0;
 }
 
-/* Main Content */
+.find-songs-page .navbar-nav .nav-link.active {
+    color: black;
+}
+
+/* ── Hero greeting ── */
+.find-songs-hero {
+    background-color: #B57F50;
+    padding: 2.5rem 5%;
+}
+
+.find-songs-hero-content {
+    max-width: 700px;
+}
+
+.find-songs-eyebrow {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 0.35rem;
+}
+
+.find-songs-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 0.4rem 0;
+    line-height: 1.15;
+}
+
+.find-songs-sub {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+/* ── Main ── */
 .find-songs-main {
     flex: 1;
-    background-color: #9cb99c;
-    padding: 40px 50px;
+    padding: 2rem 5%;
+    min-width: 0;
+    overflow-x: hidden;
 }
 
-.page-title {
-    font-size: 32px;
-    font-weight: bold;
-    color: #000;
-    margin: 0 0 25px 0;
-}
-
-/* Time Range Selector */
-.time-range-selector {
+/* ── Controls row ── */
+.fs-controls-row {
     display: flex;
-    margin-bottom: 25px;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
     position: relative;
 }
 
-.time-range-buttons {
+.fs-time-btns {
     display: flex;
-    gap: 10px;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
-.time-range-buttons button {
-    padding: 10px 20px;
-    border: 2px solid #000;
+.fs-time-btn {
+    padding: 7px 18px;
+    border: 1.5px solid #ccc;
     border-radius: 25px;
     background-color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
     cursor: pointer;
-    font-size: 14px;
     transition: all 0.2s;
+    color: #555;
 }
 
-.time-range-selector button:hover {
-    background-color: #d7d7d7;
+.fs-time-btn:hover {
+    border-color: #B57F50;
+    color: #B57F50;
 }
 
-.time-range-selector button.active {
-    background-color: #000;
+.fs-time-btn.active {
+    background-color: #B57F50;
+    border-color: #B57F50;
     color: #fff;
+    font-weight: 500;
 }
 
-/* Loading and Error */
-.loading, .error {
-    font-size: 16px;
-    padding: 20px;
+/* ── History dropdown ── */
+.fs-history-wrapper {
+    position: relative;
+}
+
+.fs-history-btn {
+    padding: 7px 18px;
+    border: 1.5px solid #ccc;
+    border-radius: 25px;
     background-color: #fff;
-    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #555;
 }
 
-.error {
-    color: #c00;
+.fs-history-btn:hover {
+    border-color: #B57F50;
+    color: #B57F50;
 }
 
-/* Main Content Layout - 3 Columns */
-.content-layout {
+.fs-history-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: #fff;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    min-width: 300px;
+    max-height: 380px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.fs-history-header {
     display: flex;
-    gap: 30px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f0ece4;
+}
+
+.fs-history-header h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #222;
+    margin: 0;
+}
+
+.fs-clear-btn {
+    font-size: 0.78rem;
+    color: #e74c3c;
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+.fs-clear-btn:hover {
+    color: #c0392b;
+}
+
+.fs-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.fs-history-item {
+    padding: 7px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 0.82rem;
+    color: #444;
+}
+
+.fs-history-item:last-child {
+    border-bottom: none;
+}
+
+.fs-history-empty {
+    font-size: 0.82rem;
+    color: #aaa;
+    font-style: italic;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.fs-loading, .fs-error {
+    font-size: 0.9rem;
+    padding: 1rem 1.25rem;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.fs-error { color: #c00; }
+
+/* ── 3-column layout ── */
+.fs-content-layout {
+    display: flex;
+    gap: 1.5rem;
     align-items: flex-start;
 }
 
-/* Left Column - Tracks */
-.tracks-column {
-    width: 220px;
+/* ── Side columns ── */
+.fs-column {
+    width: 210px;
     flex-shrink: 0;
 }
 
-.tracks-column h2,
-.artists-column h2 {
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0 0 12px 0;
-    color: #000;
+.fs-column-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #B57F50;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e8e0d8;
 }
 
-/* Right Column - Artists */
-.artists-column {
-    width: 220px;
-    flex-shrink: 0;
-}
-
-/* Tracks and Artists Lists */
-.tracks-list, .artists-list {
+.fs-list {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
 }
 
-.track-item, .artist-item {
+/* ── Track / Artist items ── */
+.fs-item-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.fs-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 10px;
-    border-radius: 25px;
-    background-color: #d9d9d9;
-    transition: transform 0.2s, box-shadow 0.2s;
-    height: 42px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.track-item:hover, .artist-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 7px 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1.5px solid transparent;
     cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 
-.track-number {
-    font-weight: bold;
-    color: #666;
-    min-width: 16px;
-    font-size: 12px;
+.fs-item:hover {
+    border-color: #B57F50;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(181, 127, 80, 0.12);
+}
+
+.fs-item-selected {
+    border-color: #B57F50 !important;
+    background-color: #fdf8f3 !important;
+    box-shadow: 0 3px 10px rgba(181, 127, 80, 0.15) !important;
+}
+
+.fs-item-number {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #bbb;
+    min-width: 14px;
     text-align: center;
 }
 
-.track-image, .artist-image {
+.fs-item-img {
     width: 30px;
     height: 30px;
-    border-radius: 4px;
+    border-radius: 5px;
     object-fit: cover;
+    flex-shrink: 0;
 }
 
-.artist-image {
+.fs-item-img-round {
     border-radius: 50%;
 }
 
-.track-info, .artist-info {
+.fs-item-info {
     display: flex;
     flex-direction: column;
-    gap: 2px;
     overflow: hidden;
     flex: 1;
     min-width: 0;
 }
 
-.track-name, .artist-name {
+.fs-item-name {
+    font-size: 0.78rem;
     font-weight: 600;
-    font-size: 12px;
+    color: #222;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #000;
 }
 
-.track-artist {
-    font-size: 10px;
+.fs-item-sub {
+    font-size: 0.68rem;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Popup ── */
+.fs-popup {
+    background-color: #fdf8f3;
+    border: 1.5px solid #e8d8c4;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    animation: fsSlideDown 0.18s ease-out forwards;
+}
+
+@keyframes fsSlideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.fs-popup p {
+    margin: 0;
+    font-size: 0.75rem;
     color: #555;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight: 400;
 }
 
-/* Middle Column - Recommendations */
-.recommendation-column {
+.fs-popup-btn {
+    padding: 5px 14px;
+    background-color: #B57F50;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.fs-popup-btn:hover { background-color: #a06d42; }
+
+/* ── Middle recommendation column ── */
+.fs-recommendation-column {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
-    background-color: rgba(255, 255, 255, 0.15);
-    border: 3px solid #B57F50;
-    border-radius: 12px;
-    padding: 30px 25px;
-    min-height: 500px;
-}
-
-.generate-btn {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 600;
+    gap: 1.25rem;
     background-color: #fff;
-    border: 2px solid #000;
-    border-radius: 8px;
+    border: 1.5px solid #e8d8c4;
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+    min-height: 480px;
+}
+
+.fs-generate-btn {
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    background-color: #B57F50;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s, transform 0.15s;
 }
 
-.generate-btn:hover {
-    background-color: #B4D2BA;
+.fs-generate-btn:hover:not(:disabled) {
+    background-color: #a06d42;
+    transform: translateY(-1px);
 }
 
-.generate-btn:disabled {
-    opacity: 0.6;
+.fs-generate-btn:disabled {
+    opacity: 0.55;
     cursor: not-allowed;
 }
 
-/* Star Difficulty section */
+/* ── Player + difficulty row ── */
+.fs-player-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
 
-.difficulty-section {
+/* ── Difficulty ── */
+.fs-difficulty {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
 
-.difficulty-header {
-    font-size: 20px;
+.fs-difficulty-label {
+    font-size: 0.82rem;
     font-weight: 600;
-    margin: 0 0 8px 0;
-    color: #333;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
-.difficulty-controls {
+.fs-difficulty-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.5rem;
 }
 
-.difficulty-arrow-btn {
+.fs-arrow-btn {
     background: none;
-    border: none;
-    font-size: 20px;
+    border: 1.5px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
     cursor: pointer;
-    padding: 8px 12px;
-    color: #555;
-    transition: color 0.2s, transform 0.2s;
+    color: #888;
+    transition: border-color 0.2s, color 0.2s;
 }
 
-.difficulty-arrow-btn:hover:not(:disabled) {
-    color: #000;
-    transform: scale(1.2);
+.fs-arrow-btn:hover:not(:disabled) {
+    border-color: #B57F50;
+    color: #B57F50;
 }
-.difficulty-arrow-btn:disabled {
-    color: #ccc;
+
+.fs-arrow-btn:disabled {
+    color: #ddd;
+    border-color: #eee;
     cursor: not-allowed;
 }
 
-.player-difficulty-row {
+.fs-stars {
     display: flex;
-    align-items: center;
-    gap: 30px;
-    margin-top: 10px;
+    gap: 3px;
 }
 
-/* Star Rating */
-.star-rating {
+.fs-star {
+    font-size: 1.6rem;
+    color: #e8e0d8;
+    transition: color 0.2s;
+}
+
+.fs-star.filled {
+    color: #f5c842;
+}
+
+/* ── Info boxes ── */
+.fs-info-boxes {
     display: flex;
-    gap: 5px;
-    margin-top: 0;
-}
-
-.star {
-    font-size: 32px;
-    color: #eaeaea;
-}
-
-.star.filled {
-    color: #ffd980;
-}
-
-/* Info Boxes */
-.info-boxes {
-    display: flex;
-    gap: 25px;
-    margin-top: 15px;
+    gap: 1rem;
     width: 100%;
-    max-width: 800px;
 }
 
-.info-box {
-    background-color: #d9d9d9;
-    padding: 20px;
-    border-radius: 8px;
-    min-width: 200px;
-    min-height: 150px;
+.fs-info-box {
+    flex: 1;
+    background-color: #fdf8f3;
+    border: 1px solid #e8d8c4;
+    padding: 1.25rem;
+    border-radius: 12px;
+    min-height: 130px;
 }
 
-.info-box h3 {
-    font-size: 16px;
-    margin: 0 0 15px 0;
-    font-weight: normal;
+.fs-info-box-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #B57F50;
+    margin-bottom: 0.75rem;
 }
 
-.info-box p {
-    font-size: 14px;
-    margin: 8px 0;
-    color: #333;
+.fs-info-box-item {
+    font-size: 0.82rem;
+    color: #444;
+    margin: 4px 0;
 }
 
-/* Empty Recommendation State */
-.empty-recommendation {
-    background-color: #d9d9d9;
-    padding: 40px 50px;
-    border-radius: 8px;
-    text-align: center;
-    margin-top: 20px;
-    max-width: 450px;
-}
-
-.empty-recommendation p {
-    font-size: 16px;
+.fs-info-box-body {
+    font-size: 0.82rem;
     color: #555;
-    margin: 0;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
-/* History Button */
-.history-btn {
-    padding: 10px 20px;                                                                                                                                               
-    border: 2px solid #000;                                                                                                                                           
-    border-radius: 25px;                                                                                                                                              
-    background-color: #fff;                                                                                                                                           
-    cursor: pointer;                                                                                                                                                  
-    font-size: 14px;                                                                                                                                                  
-    transition: all 0.2s;                                                                                                                                             
-}
-                                                                                                                                                                    
-.history-btn:hover {                                                                                                                                                  
-    background-color: #B4D2BA;                                                                                                                                        
-}                                                                                                                                                                     
-                                                                                                                                                                    
-/* History Panel */                                                                                                                                                   
-.history-panel {                     
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 0;                                                                                                                                 
-    background-color: #fff;                                                                                                                                           
-    border: 2px solid #000;                                                                                                                                           
-    border-radius: 12px;                                                                                                                                              
-    padding: 25px 40px;                                                                                                                                               
-    margin-bottom: 25px;                                                                                                                                              
-    max-height: 400px;
-    min-height: 300px;                                                                                                                                                
-    overflow-y: auto;
-    z-index: 100;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-
-}                                                                                                                                                      
-
-.history-header {                                                                                                                                                     
-    display: flex;                                                                                                                                                    
-    justify-content: space-between;    
-    gap: 20px;                                                                                                                               
-    align-items: center;                                                                                                                                              
-    margin-bottom: 10px;                                                                                                                                              
-    padding-bottom: 10px;                                                                                                                                             
-    border-bottom: 1px solid #ddd;                                                                                                                                    
-}                                                                                                                                                                     
-                                                                                                                                                                    
-.history-header h3 {                                                                                                                                                  
-    margin: 0;                                                                                                                                                        
-    font-size: 16px;                                                                                                                                                  
-}                                                                                                                                                                     
-                                                                                                                                                                    
-.clear-history-btn {                                                                                                                                                  
-    color: #c00;
-    cursor: pointer;                                                                                                                                                  
-    font-size: 11.5px;                                                                                                                                                  
-    text-decoration: underline;                                                                                                                                       
-}
-                                                                                                                                                                    
-.clear-history-btn:hover {                                                                                                                                            
-    color: #900;                                                                                                                                                      
-}                                                                                                                                                                     
-                                                                                                                                                                    
-.history-list {                                                                                                                                                       
-    list-style: none;                                                                                                                                                 
-    padding: 0;                                                                                                                                                       
-    margin: 0;                                                                                                                                                        
-}                                                                                                                                                                     
-                                                                                                                                                                    
-.history-item {                                                                                                                                                       
-    padding: 8px 0;                                                                                                                                                   
-    border-bottom: 1px solid #eee;                                                                                                                                    
-    font-size: 14px;                                                                                                                                                  
-}                                                                                                                                                                     
-                                                                                                                                                                    
-.history-item:last-child {                                                                                                                                            
-    border-bottom: none;                                                                                                                                              
-}                                                                                                                                                                     
-                                                                                                                                                                    
-.history-empty {                                                                                                                                                      
-    color: #666;                                                                                                                                                      
-    font-style: italic;                                                                                                                                               
-    text-align: center;                                                                                                                                               
-    margin: 20px 0;                                                                                                                                                   
-}                                                                                                                                                                     
-                                                                                                                                                                    
-/* Wrapper for positioning popup */
-.popup-buttons {
-    display: flex;
-    background: none;
-    padding: 0;
-    margin: 0;
-}
-/* Similar song popup */                                                                                                                                              
-.similar-popup {                                                                                                                                                      
-    background-color: #f0f0f0;                                                                                                                                        
-    border-radius: 25px;                                                                                                                                              
-    padding: 12px 15px;                                                                                                                                               
-    margin-top: 6px;      
-    margin-left: 15px;                                                                                                                                            
-    display: flex;                                                                                                                                                    
-    align-items: center;                                                                                                                                              
-    justify-content: space-between;                                                                                                                                   
-    gap: 10px;                                                                                                                                                        
-    animation: slideDown 0.2s ease-out forwards;
-    transform-origin: top;                                                                                                                               
-}                                                                                                                                                                     
-                                                                                                                                                                        
-    /* Smooth slide-down animation */                                                                                                                                     
-@keyframes slideDown {                                                                                                                                                
-    0% {                                                                                                                                                            
-        opacity: 0;                                                                                                                                                   
-        max-height: 0;                                                                                                                                                
-        padding: 0 15px;                                                                                                                                              
-        margin-top: 0;                                                                                                                                                
-    }                                                                                                                                                                 
-    100% {                                                                                                                                                              
-        opacity: 1;                                                                                                                                                   
-        max-height: 60px;                                                                                                                                             
-        padding: 12px 15px;                                                                                                                                           
-        margin-top: 6px;                                                                                                                                              
-    }                                                                                                                                                                 
-}                                                                                                                                                                     
-                                                                                                                                                                        
-.similar-popup p {                                                                                                                                                    
-    margin: 0;                                                                                                                                                        
-    font-size: 12px;                                                                                                                                                  
-    font-weight: 500;                                                                                                                                                 
-    color: #333;                                                                                                                                                      
-}                                                                                                                                                                     
-
-.popup-yes-btn {                                                                                                                                                      
-    padding: 6px 16px;                                                                                                                                                
-    background-color: #507b67;                                                                                                                                        
-    color: white;                                                                                                                                                     
-    border: none;
-    border-radius: 15px;                                                                                                                                              
-    font-size: 12px;                                                                                                                                                  
-    cursor: pointer;                                                                                                                                                  
-    transition: background-color 0.2s;                                                                                                                                
-    flex-shrink: 0;                                                                                                                                                   
+/* ── Empty state ── */
+.fs-empty {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    max-width: 380px;
 }
 
-.similar-popup button,                                                                                                                                                
-.popup-buttons button {                                                                                                                                               
-    padding: 6px 16px;                                                                                                                                                
-    background-color: #2f5f48;                                                                                                                                        
-    color: white;                                                                                                                                                     
-    border: none;                                                                                                                                                     
-    border-radius: 15px;                                                                                                                                              
-    font-size: 12px;                                                                                                                                                  
-    cursor: pointer;                                                                                                                                                  
-    transition: background-color 0.2s;                                                                                                                                
-}                                                                                                                                                                     
-                                                                                                                                                                        
-.similar-popup button:hover,                                                                                                                                          
-.popup-buttons button:hover {                                                                                                                                         
-    background-color: #3d7a5a;                                                                                                                                        
-}         
+.fs-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.fs-empty p {
+    font-size: 0.88rem;
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+}
+
+.fs-empty strong {
+    color: #555;
+    font-weight: 500;
+}
+
+/* ── Footer ── */
+.fs-footer {
+    padding: 1.5rem 2rem;
+    font-size: 0.8rem;
+}
+
+.fs-footer span {
+    color: #555 !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .fs-content-layout {
+        flex-direction: column;
+    }
+
+    .fs-column {
+        width: 100%;
+    }
+
+    .fs-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+    }
+
+    .fs-recommendation-column {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .find-songs-main {
+        padding: 1.5rem 4%;
+    }
+
+    .fs-list {
+        grid-template-columns: 1fr;
+    }
+
+    .fs-info-boxes {
+        flex-direction: column;
+    }
+
+    .fs-controls-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

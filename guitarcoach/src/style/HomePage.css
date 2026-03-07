@@ -6,6 +6,7 @@
     padding: 0;
 }
 
+/* ── Base ── */
 .home-page {
     font-family: 'Poppins', sans-serif;
     display: flex;
@@ -13,6 +14,7 @@
     min-height: 100vh;
 }
 
+/* ── Navbar ── */
 .home-page .navbar {
     padding: 0.75rem 2rem;
 }
@@ -29,6 +31,7 @@
     color: black;
 }
 
+/* ── Intro ── */
 .home-page .guitarcoach-intro {
     min-height: 100vh;
     background-image: url('../images/home-page-cover.png');
@@ -63,6 +66,7 @@
     color: white;
 }
 
+/* ── Features ── */
 .home-page .guitarcoach-features {
     background-color: #f7f4f0;
     padding: 60px 20px 80px;
@@ -111,6 +115,7 @@
     margin-top: 10px;
 }
 
+/* ── Footer ── */
 .home-page .home-footer {
     padding: 1.5rem 2rem;
     font-size: 0.8rem;

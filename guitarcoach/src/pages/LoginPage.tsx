@@ -77,84 +77,84 @@ function LoginPage() {
     }
 
     return (
-       <div className="login-page">
+        <div className="login-page">
             <nav className="navbar navbar-expand-lg">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="/"> GuitarCoach </a>
+                    <a className="navbar-brand" href="/">GuitarCoach</a>
                 </div>
             </nav>
 
-            <section className="login-section">
-                <div className="login-card">
-                    <div className="login-card-image">
-                        <span className="login-card-image-label"></span>
-                    </div>
-
-                    <div className="login-card-form">
-                        <div>
-                            <h1 className="login-card-title">
-                                {isSignUp ? "Create Account" : "Welcome Back"}
-                            </h1>
-                            <p className="login-card-subtitle">
-                                {isSignUp ? "Join GuitarCoach and start your journey." : "Log in to continue your practice."}
-                            </p>
+            <main className="login-main">
+                <section className="login-section">
+                    <div className="login-card">
+                        <div className="login-card-image">
+                            <span className="login-card-image-label"></span>
                         </div>
 
-                        <ul className="nav nav-pills nav-justified" id="pills-tab" role="tablist">
-                            <li className="nav-item" role="presentation">
+                        <div className="login-card-form">
+                            <div>
+                                <h1 className="login-card-title">
+                                    {isSignUp ? "Create Account" : "Welcome Back"}
+                                </h1>
+                                <p className="login-card-subtitle">
+                                    {isSignUp ? "Join GuitarCoach and start your journey." : "Log in to continue your practice."}
+                                </p>
+                            </div>
+
+                            <div className="nav nav-pills nav-justified" id="pills-tab" role="tablist">
                                 <button
                                     className={`nav-link ${!isSignUp ? "active" : ""}`}
                                     type="button"
+                                    role="tab"
                                     onClick={() => { setIsSignUp(false); setError("") }}
                                 >
                                     Log In
                                 </button>
-                            </li>
-                            <li className="nav-item" role="presentation">
                                 <button
                                     className={`nav-link ${isSignUp ? "active" : ""}`}
                                     type="button"
+                                    role="tab"
                                     onClick={() => { setIsSignUp(true); setError("") }}
                                 >
                                     Sign Up
                                 </button>
-                            </li>
-                        </ul>
+                            </div>
 
-                        <form onSubmit={handleSubmit} className="create-account">
-                            {isSignUp && (
+                            <form onSubmit={handleSubmit} className="create-account">
+                                {isSignUp && (
+                                    <input
+                                        type="text"
+                                        placeholder="Username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                        minLength={6}
+                                    />
+                                )}
                                 <input
-                                    type="text"
-                                    placeholder="Username"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    type="email"
+                                    placeholder="Email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     required
                                     minLength={6}
                                 />
-                            )}
-                            <input
-                                type="email"
-                                placeholder="Email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                minLength={6}
-                            />
-                            {error && <p className="error">{error}</p>}
-                            <button type="submit" className="submit-auth" disabled={isSubmitting}>
-                                {isSubmitting ? "Please wait..." : (isSignUp ? "Sign Up" : "Log In")}
-                            </button>
-                        </form>
+                                {error && <p className="error">{error}</p>}
+                                <button type="submit" className="submit-auth" disabled={isSubmitting}>
+                                    {isSubmitting ? "Please wait..." : (isSignUp ? "Sign Up" : "Log In")}
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </main>
 
             <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top login-footer">
                 <span className="mb-3 mb-md-0">© 2026 GuitarCoach, Inc</span>

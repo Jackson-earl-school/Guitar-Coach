@@ -8,21 +8,36 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 const API_BASE = "http://127.0.0.1:8000"
 
+const CACHE_KEY_USERNAME = "gc_username"
+const CACHE_KEY_EMAIL = "gc_email"
+const CACHE_KEY_SPOTIFY = "gc_spotify_connected"
+
 export default function ProfilePage() {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
 
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
-    const [spotifyConnected, setSpotifyConnected] = useState(false)
+    // Read from cache instantly so the UI renders correctly on the first frame
+    const [username, setUsername] = useState<string>(
+        () => localStorage.getItem(CACHE_KEY_USERNAME) ?? ""
+    )
+    const [email, setEmail] = useState<string>(
+        () => localStorage.getItem(CACHE_KEY_EMAIL) ?? ""
+    )
+    const [spotifyConnected, setSpotifyConnected] = useState<boolean>(
+        () => localStorage.getItem(CACHE_KEY_SPOTIFY) === "true"
+    )
 
     useEffect(() => {
-        if (searchParams.get("spotify_connected")) setSpotifyConnected(true)
+        // If Spotify just got connected via OAuth redirect, update cache immediately
+        if (searchParams.get("spotify_connected")) {
+            setSpotifyConnected(true)
+            localStorage.setItem(CACHE_KEY_SPOTIFY, "true")
+        }
         if (searchParams.get("spotify_error")) {
             console.error("Spotify error:", searchParams.get("spotify_error"))
         }
 
-        ;(async () => {
+        ; (async () => {
             const { data: sessionData } = await supabase.auth.getSession()
             if (!sessionData.session) {
                 navigate("/login");
@@ -36,7 +51,10 @@ export default function ProfilePage() {
                 return
             }
 
-            setEmail(user.email ?? "")
+            // Update email and cache it
+            const userEmail = user.email ?? ""
+            setEmail(userEmail)
+            localStorage.setItem(CACHE_KEY_EMAIL, userEmail)
 
             const { data: profile, error } = await supabase
                 .from("profiles")
@@ -54,10 +72,16 @@ export default function ProfilePage() {
                 return
             }
 
-            setUsername(profile.username ?? "")
+            // Update username and cache it
+            const name = profile.username ?? ""
+            setUsername(name)
+            localStorage.setItem(CACHE_KEY_USERNAME, name)
 
-            if (!searchParams.get("spotify_connected")){
-                setSpotifyConnected(!!profile.spotify_access_token)
+            // Only update Spotify status from DB if the URL param didn't already set
+            if (!searchParams.get("spotify_connected")) {
+                const connected = !!profile.spotify_access_token
+                setSpotifyConnected(connected)
+                localStorage.setItem(CACHE_KEY_SPOTIFY, String(connected))
             }
         })()
     }, [navigate, searchParams])
@@ -70,6 +94,12 @@ export default function ProfilePage() {
 
     async function logout() {
         await supabase.auth.signOut()
+
+        // Cache clears when a user logs out
+        localStorage.removeItem(CACHE_KEY_USERNAME)
+        localStorage.removeItem(CACHE_KEY_EMAIL)
+        localStorage.removeItem(CACHE_KEY_SPOTIFY)
+
         navigate("/login")
     }
 
@@ -91,10 +121,8 @@ export default function ProfilePage() {
                     </button>
                     <div className="collapse navbar-collapse" id="profileNavbar">
                         <ul className="navbar-nav justify-content-end w-100">
-                            <li className="nav-item"><a className="nav-link" href="/practice-plans"> Coach </a></li>
-                            <li className="nav-item"><a className="nav-link" href="/find-songs"> Find Songs </a></li>
-                            <li className="nav-item"><a className="nav-link" href="/schedule"> Tasks </a></li>
-                            <li className="nav-item"><a className="nav-link active" aria-current="page" href="/profile"> Profile </a></li>
+                            <li className="nav-item"><a className="nav-link" href="/dashboard">Dashboard</a></li>
+                            <li className="nav-item"><a className="nav-link active" aria-current="page" href="/profile">Profile</a></li>
                         </ul>
                     </div>
                 </div>
@@ -108,7 +136,6 @@ export default function ProfilePage() {
             </section>
 
             <main className="profile-main">
-
                 <section className="profile-card">
                     <h2 className="profile-card-title">Account Info</h2>
 
@@ -119,9 +146,7 @@ export default function ProfilePage() {
 
                     <div className="profile-field">
                         <span className="profile-field-label">Username</span>
-                        <div className="profile-edit-row">
-                            <span className="profile-field-value">{username}</span>
-                        </div>
+                        <span className="profile-field-value">{username}</span>
                     </div>
                 </section>
 
@@ -155,7 +180,6 @@ export default function ProfilePage() {
                     <p className="profile-danger-text">Sign out of your GuitarCoach account on this device.</p>
                     <button className="profile-btn-logout" onClick={logout}>Log Out</button>
                 </section>
-
             </main>
 
             <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top profile-footer">
