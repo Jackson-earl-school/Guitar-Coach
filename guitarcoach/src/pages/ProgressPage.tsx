@@ -1,9 +1,13 @@
-import "../style/ProgressPage.css"
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts"
 import { supabase } from "../supabaseClient"
 import { getSkillScores, getPlayerType } from "./utils/getSkillsScore"
-import type { SkillScore, QuestionnaireAnswers } from "./utils/getSkillsScore"
 import { useEffect, useState } from "react"
+
+import type { SkillScore, QuestionnaireAnswers } from "./utils/getSkillsScore"
+
+import "bootstrap/dist/css/bootstrap.css"
+import "../style/ProgressPage.css"
+import "../style/Dashboard.css"
 
 // Skill descriptions and what factors impact each score
 const skillInfo: Record<string, { description: string; factors: string[] }> = {
@@ -166,7 +170,7 @@ export default function ProgressPage() {
                     cx={cx}
                     cy={cy}
                     r={8}
-                    fill="#3d5a3d"
+                    fill="#B57F50"
                     stroke="#fff"
                     strokeWidth={2}
                     style={{ pointerEvents: 'none' }}
@@ -243,130 +247,124 @@ export default function ProgressPage() {
 
     return (
         <div className="progress-page">
-            <header className="dashboard-header">
-                <div className="container">
-                    <div className="logo" onClick={() => { window.location.href = '/dashboard'; }}>
-                        GuitarCoach
-                    </div>
-                    <nav className='navbar'>
-                        <ul className='navbar-list'>
-                            <li><a href='/'>Coach</a></li>
-                            <li><a href='/'>Find Songs</a></li>
-                            <li><a href='/'>Tasks</a></li>
-                            <li>
-                                <button onClick={() => { window.location.href = '/profile'; }} className="profile-button">
-                                    Profile
-                                </button>
-                            </li>
+            <nav className="navbar navbar-expand-lg bg-body-tertiary">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="/dashboard">GuitarCoach</a>
+                    <button
+                        className="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#profileNavbar"
+                        aria-controls="profileNavbar"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="profileNavbar">
+                        <ul className="navbar-nav justify-content-end w-100">
+                            <li className="nav-item"><a className="nav-link" href="/dashboard">Dashboard</a></li>
+                            <li className="nav-item"><a className="nav-link" href="/profile"> Profile </a></li>
                         </ul>
-                    </nav>
+                    </div>
                 </div>
-            </header>
+            </nav>
+
+            <section className="progress-hero">
+                <div className="progress-hero-content">
+                    <p className="progress-eyebrow">Track</p>
+                    <h1 className="progress-title">Overall Progress</h1>
+                    <p className="progress-sub">Your skill breakdown based on questionnaire answers.</p>
+                </div>
+            </section>
 
             <main className="progress-main">
-                <h1 className="page-title">
-                    Overall Progress
-                </h1>
-
                 {loading ? (
-                    <p>Loading your skills...</p>
+                    <p className="progress-loading">Loading your skills...</p>
                 ) : error ? (
-                    <div className="error-message">
+                    <div className="progress-error">
                         <p>{error}</p>
                     </div>
                 ) : (
                     <div className="progress-content">
-                        {/* Left Column - Radar Chart */}
+
+                        {/* Left — Radar + bars */}
                         <div className="radar-section">
-                            <h2 className="radar-title">Skill Radar</h2>
-                            <p className="radar-subtitle">Derived from your questionnaire answers</p>
+                            <div className="progress-card">
+                                <h2 className="progress-card-title">Skill Radar</h2>
+                                <p className="progress-card-subtitle">Click any node to learn more about that skill</p>
 
-                            <div className="radar-chart-wrapper">
-                                <ResponsiveContainer width="100%" height={550}>
-                                    <RadarChart
-                                        cx="50%"
-                                        cy="50%"
-                                        outerRadius="75%"
-                                        data={chartData}
-                                    >
-                                        <PolarGrid stroke="#5a7a5a" />
-                                        <PolarAngleAxis
-                                            dataKey="skill"
-                                            tick={(props) => <CustomTick {...props} chartData={chartData} />}
-                                            tickLine={false}
-                                        />
-                                        <PolarRadiusAxis
-                                            angle={90}
-                                            domain={[0, 100]}
-                                            tickCount={4}
-                                            tickFormatter={formatTick}
-                                            tick={{ fill: '#5a7a5a', fontSize: 11 }}
-                                            axisLine={false}
-                                        />
-                                        <Radar
-                                            name="Skills"
-                                            dataKey="value"
-                                            stroke="#3d5a3d"
-                                            fill="#5a7a5a"
-                                            fillOpacity={0.5}
-                                            dot={<ClickableDot />}
-                                        />
-                                    </RadarChart>
-                                </ResponsiveContainer>
-                            </div>
-
-                            <div className="skill-bars">
-                                {chartData.map((item) => (
-                                    <div key={item.skill} className="skill-bar-item">
-                                        <div className="skill-bar-label">{item.skill}</div>
-                                        <div className="skill-bar-track">
-                                            <div
-                                                className="skill-bar-fill"
-                                                style={{ width: `${item.value}%` }}
+                                <div className="radar-chart-wrapper">
+                                    <ResponsiveContainer width="100%" height={500}>
+                                        <RadarChart cx="50%" cy="50%" outerRadius="72%" data={chartData}>
+                                            <PolarGrid stroke="#e8d8c4" />
+                                            <PolarAngleAxis
+                                                dataKey="skill"
+                                                tick={(props) => <CustomTick {...props} chartData={chartData} />}
+                                                tickLine={false}
                                             />
+                                            <PolarRadiusAxis
+                                                angle={90}
+                                                domain={[0, 100]}
+                                                tickCount={4}
+                                                tickFormatter={formatTick}
+                                                tick={{ fill: '#bbb', fontSize: 10 }}
+                                                axisLine={false}
+                                            />
+                                            <Radar
+                                                name="Skills"
+                                                dataKey="value"
+                                                stroke="#B57F50"
+                                                fill="#B57F50"
+                                                fillOpacity={0.25}
+                                                dot={<ClickableDot />}
+                                            />
+                                        </RadarChart>
+                                    </ResponsiveContainer>
+                                </div>
+
+                                <div className="skill-bars">
+                                    {chartData.map((item) => (
+                                        <div key={item.skill} className="skill-bar-item">
+                                            <span className="skill-bar-label">{item.skill}</span>
+                                            <div className="skill-bar-track">
+                                                <div className="skill-bar-fill" style={{ width: `${item.value}%` }} />
+                                            </div>
+                                            <span className="skill-bar-value">{item.value}%</span>
                                         </div>
-                                        <div className="skill-bar-value">{item.value}%</div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Right Column - Player Profile */}
+                        {/* Right — Player profile + answers */}
                         <div className="profile-section">
-                            {/* Player Type Emblem */}
-                            <div className="player-emblem">
-                                <div className="emblem-icon">
-                                    <span className="emblem-guitar">🎸</span>
-                                </div>
+
+                            {/* Player type emblem */}
+                            <div className="progress-card player-emblem-card">
+                                <div className="emblem-icon">🎸</div>
                                 <h3 className="emblem-title">{playerType}</h3>
                                 <p className="emblem-subtitle">Current Level</p>
                             </div>
 
-                            {/* Questionnaire Summary */}
-                            <div className="answers-section">
-                                <h3 className="answers-title">Your Questionnaire Answers</h3>
-                                <p className="answers-subtitle"> These will update as you complete tasks in your practice plans</p>
+                            {/* Questionnaire answers */}
+                            <div className="progress-card">
+                                <h2 className="progress-card-title">Questionnaire Answers</h2>
+                                <p className="progress-card-subtitle">Updates as you complete practice plan tasks</p>
 
                                 {answers && (
                                     <div className="answers-list">
-                                        {/* Technique Ratings */}
                                         {answers.techniques && Object.keys(answers.techniques).length > 0 && (
                                             <div className="answer-group">
-                                                <span className="answer-group-label">Technique Ratings (1-5)</span>
+                                                <span className="answer-group-label">Technique Ratings (1–5)</span>
                                                 <div className="technique-sliders">
                                                     {Object.entries(answers.techniques).map(([tech, rating]) => (
                                                         <div key={tech} className="technique-item">
                                                             <span className="technique-name">{tech}</span>
                                                             <div className="technique-slider">
                                                                 <div className="slider-track">
-                                                                    <div
-                                                                        className="slider-fill"
-                                                                        style={{ width: `${(rating / 5) * 100}%` }}
-                                                                    />
-                                                                    <div
-                                                                        className="slider-thumb"
-                                                                        style={{ left: `${(rating / 5) * 100}%` }}
-                                                                    />
+                                                                    <div className="slider-fill" style={{ width: `${(rating / 5) * 100}%` }} />
+                                                                    <div className="slider-thumb" style={{ left: `${(rating / 5) * 100}%` }} />
                                                                 </div>
                                                             </div>
                                                             <span className="technique-value">{rating}</span>
@@ -376,75 +374,62 @@ export default function ProgressPage() {
                                             </div>
                                         )}
 
-                                        {/* Technical Skills */}
                                         {answers.technical_skills && answers.technical_skills.length > 0 && (
                                             <div className="answer-group">
                                                 <span className="answer-group-label">Technical Skills</span>
-                                                <div className="skills-list">
+                                                <div className="skills-tags">
                                                     {answers.technical_skills.map(skill => (
-                                                        <div key={skill} className="skill-tag">
-                                                            <span>✓</span> {skill}
-                                                        </div>
+                                                        <span key={skill} className="skill-tag">✓ {skill}</span>
                                                     ))}
                                                 </div>
                                             </div>
                                         )}
 
-                                        {/* Simple answer displays */}
-                                        <div className="answer-group">
-                                            <span className="answer-group-label">Chord Switching</span>
-                                            <span className="answer-value">{answers.switching_chords || "Not set"}</span>
-                                        </div>
-
-                                        <div className="answer-group">
-                                            <span className="answer-group-label">Song Playing</span>
-                                            <span className="answer-value">{answers.song_playing || "Not set"}</span>
-                                        </div>
-
-                                        <div className="answer-group">
-                                            <span className="answer-group-label">Soloing</span>
-                                            <span className="answer-value">{answers.soloing || "Not set"}</span>
-                                        </div>
-
-                                        <div className="answer-group">
-                                            <span className="answer-group-label">Goal</span>
-                                            <span className="answer-value">{answers.goal || "Not set"}</span>
-                                        </div>
+                                        {[
+                                            { label: "Chord Switching", value: answers.switching_chords },
+                                            { label: "Song Playing", value: answers.song_playing },
+                                            { label: "Soloing", value: answers.soloing },
+                                            { label: "Goal", value: answers.goal },
+                                        ].map(({ label, value }) => (
+                                            <div key={label} className="answer-group">
+                                                <span className="answer-group-label">{label}</span>
+                                                <span className="answer-value">{value || "Not set"}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
                             </div>
                         </div>
                     </div>
                 )}
+            </main>
 
-                {/* Skill Detail Popup */}
-                {selectedSkill && skillInfo[selectedSkill] && (
-                    <div className="skill-popup-overlay" onClick={() => setSelectedSkill(null)}>
-                        <div className="skill-popup" onClick={(e) => e.stopPropagation()}>
-                            <button className="popup-close" onClick={() => setSelectedSkill(null)}>×</button>
-
-                            <h3 className="popup-title">{selectedSkill}</h3>
-                            <p className="popup-score">
-                                Score: {chartData.find(d => d.skill === selectedSkill)?.value ?? 0}%
-                            </p>
-
-                            <p className="popup-description">
-                                {skillInfo[selectedSkill].description}
-                            </p>
-
-                            <div className="popup-factors">
-                                <h4>What impacts this score:</h4>
-                                {skillInfo[selectedSkill].factors.map(factor => (
-                                    <div key={factor} className="factor-item">
-                                        <span className="factor-label">{factorLabels[factor]}:</span>
-                                        <span className="factor-value">{getAnswerDisplay(factor)}</span>
-                                    </div>
-                                ))}
-                            </div>
+            {/* ── Skill detail popup ── */}
+            {selectedSkill && skillInfo[selectedSkill] && (
+                <div className="skill-popup-overlay" onClick={() => setSelectedSkill(null)}>
+                    <div className="skill-popup" onClick={(e) => e.stopPropagation()}>
+                        <button className="popup-close" onClick={() => setSelectedSkill(null)}>×</button>
+                        <h3 className="popup-title">{selectedSkill}</h3>
+                        <p className="popup-score">
+                            Score: <strong>{chartData.find(d => d.skill === selectedSkill)?.value ?? 0}%</strong>
+                        </p>
+                        <p className="popup-description">{skillInfo[selectedSkill].description}</p>
+                        <div className="popup-factors">
+                            <h4>What impacts this score</h4>
+                            {skillInfo[selectedSkill].factors.map(factor => (
+                                <div key={factor} className="factor-item">
+                                    <span className="factor-label">{factorLabels[factor]}</span>
+                                    <span className="factor-value">{getAnswerDisplay(factor)}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
-                )}
-            </main>
+                </div>
+            )}
+
+            <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top progress-footer">
+                <span className="mb-3 mb-md-0 text-body-secondary">© 2026 GuitarCoach, Inc</span>
+            </footer>
         </div>
     )
 }
