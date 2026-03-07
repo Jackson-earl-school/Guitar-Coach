@@ -7,7 +7,7 @@ import type { SkillScore, QuestionnaireAnswers } from "./utils/getSkillsScore"
 
 import "bootstrap/dist/css/bootstrap.css"
 import "../style/ProgressPage.css"
-import "../style/Dashboard.css"
+import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 // Skill descriptions and what factors impact each score
 const skillInfo: Record<string, { description: string; factors: string[] }> = {
