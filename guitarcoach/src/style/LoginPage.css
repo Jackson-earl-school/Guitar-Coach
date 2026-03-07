@@ -6,6 +6,7 @@
     padding: 0;
 }
 
+/* ── Base ── */
 .login-page {
     font-family: 'Poppins', sans-serif;
     display: flex;
@@ -13,6 +14,7 @@
     min-height: 100vh;
 }
 
+/* ── Navbar ── */
 .login-page .navbar {
     padding: 0.75rem 2rem;
 }
@@ -30,6 +32,7 @@
     background-color: #f7f4f0;
 }
 
+/* ── Login card ── */
 .login-card {
     display: flex;
     width: 100%;
@@ -95,6 +98,7 @@
     font-weight: 300;
 }
 
+/* ── Nav pills ── */
 .nav-pills .nav-link {
     color: #aaa;
     border-radius: 30px;
@@ -114,6 +118,7 @@
     background-color: rgba(181, 127, 80, 0.1);
 }
 
+/* ── Login card form ── */
 .login-card-form .create-account {
     display: flex;
     flex-direction: column;
@@ -176,6 +181,7 @@
     text-align: center;
 }
 
+/* ── Footer ── */
 .login-footer {
     padding: 1.5rem 2rem;
     font-size: 0.8rem;
