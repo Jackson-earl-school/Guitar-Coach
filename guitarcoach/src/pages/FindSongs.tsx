@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../supabaseClient"
+
+import "bootstrap/dist/css/bootstrap.css"
 import "../style/FindSongs.css"
+import "bootstrap/dist/js/bootstrap.bundle.min.js"
+
 
 interface SpotifyTrack {
     id: string
@@ -128,7 +132,7 @@ export default function FindSongs() {
 
     async function generateRecommendation(
         adjust_difficulty: "up" | "down" | null = null,
-        similarTo?: {type: "track" | "artist", name: string, artistName?: string }
+        similarTo?: { type: "track" | "artist", name: string, artistName?: string }
     ) {
         if (topTracks.length == 0) return
 
@@ -156,7 +160,7 @@ export default function FindSongs() {
                     name: similarTo.name,
                     artist_name: similarTo.artistName || null,
                     current_difficulty: recommendedSong?.difficulty || (Math.floor(Math.random() * 5) + 1),
-                    previous_songs: previousSongs 
+                    previous_songs: previousSongs
                 }
                 : {
                     top_tracks: topTracks,
@@ -184,7 +188,7 @@ export default function FindSongs() {
                 `${API_BASE}/api/recommendation/search-spotify?song_name=${encodeURIComponent(recommendation.name)}&artist_name=${encodeURIComponent(recommendation.artist)}`,
                 {
                     method: "POST",
-                    headers: { "Authorization": `Bearer ${token}`}
+                    headers: { "Authorization": `Bearer ${token}` }
                 }
             )
             const spotifyData = await spotifyRes.json()
@@ -208,135 +212,123 @@ export default function FindSongs() {
     }
 
     return (
-        <div className="dashboard-page">
-            <header className="dashboard-header">
-                <div className="container">
-                    <div className="logo" onClick={() => { window.location.href = '/dashboard'; }}>
-                        GuitarCoach
-                    </div>
-                    <nav className='navbar'>
-                        <ul className='navbar-list'>
-                            <li><a href='/dashboard'>Coach</a></li>
-                            <li><a href='/find-songs'>Find Songs</a></li>
-                            <li><a href='/'>Tasks</a></li>
-                            <li>
-                                <button onClick={() => { window.location.href = '/profile'; }} className="profile-button">
-                                    Profile
-                                </button>
-                            </li>
+        <div className="find-songs-page">
+            <nav className="navbar navbar-expand-lg bg-body-tertiary">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="/dashboard">GuitarCoach</a>
+                    <button
+                        className="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#profileNavbar"
+                        aria-controls="profileNavbar"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="profileNavbar">
+                        <ul className="navbar-nav justify-content-end w-100">
+                            <li className="nav-item"><a className="nav-link" href="/dashboard">Dashboard</a></li>
+                            <li className="nav-item"><a className="nav-link" href="/profile"> Profile </a></li>
                         </ul>
-                    </nav>
+                    </div>
                 </div>
-            </header>
+            </nav>
+
+            <section className="find-songs-hero">
+                <div className="find-songs-hero-content">
+                    <p className="find-songs-eyebrow">Discover</p>
+                    <h1 className="find-songs-title">Find Songs</h1>
+                    <p className="find-songs-sub">Personalized recommendations based on your Spotify listening history.</p>
+                </div>
+            </section>
 
             <main className="find-songs-main">
-                <h1 className="page-title">Find Songs</h1>
-
-                <div className="time-range-selector">
-                    <div className="time-range-buttons">
-                        <button
-                            className={timeRange === "short_term" ? "active" : ""}
-                            onClick={() => setTimeRange("short_term")}
-                        >
-                            Last 4 Weeks
-                        </button>
-                        <button
-                            className={timeRange === "medium_term" ? "active" : ""}
-                            onClick={() => setTimeRange("medium_term")}
-                        >
-                            Last 6 Months
-                        </button>
-                        <button
-                            className={timeRange === "long_term" ? "active" : ""}
-                            onClick={() => setTimeRange("long_term")}
-                        >
-                            All Time
-                        </button>
+                <div className="fs-controls-row">
+                    <div className="fs-time-btns">
+                        {[
+                            { value: "short_term", label: "Last 4 Weeks" },
+                            { value: "medium_term", label: "Last 6 Months" },
+                            { value: "long_term", label: "All Time" },
+                        ].map(opt => (
+                            <button
+                                key={opt.value}
+                                className={`fs-time-btn ${timeRange === opt.value ? "active" : ""}`}
+                                onClick={() => setTimeRange(opt.value)}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
                     </div>
 
-                    <button
-                        className="history-btn"
-                        onClick={() => setShowHistory(!showHistory)}
-                    >
-                        {showHistory ? "Hide history" : "View recommendation history"}
-                    </button>
-                    {showHistory && (
-                        <div className="history-panel">
-                            <div className="history-header">
-                                <h3>Recommendation History    </h3>
-                                <button 
-                                    className="clear-history-btn"
-                                    onClick={() => {
-                                        setPreviousSongs([])
-                                        setShowHistory(false)
-                                    }}
-                                >
-                                    Clear all
-                                </button>
+                    <div className="fs-history-wrapper">
+                        <button className="fs-history-btn" onClick={() => setShowHistory(!showHistory)}>
+                            {showHistory ? "Hide history" : "View recommendation history"}
+                        </button>
+                        {showHistory && (
+                            <div className="fs-history-panel">
+                                <div className="fs-history-header">
+                                    <h3>Recommendation History</h3>
+                                    <button className="fs-clear-btn" onClick={() => { setPreviousSongs([]); setShowHistory(false) }}>
+                                        Clear all
+                                    </button>
+                                </div>
+                                {previousSongs.length === 0 ? (
+                                    <p className="fs-history-empty">No recommendations yet</p>
+                                ) : (
+                                    <ul className="fs-history-list">
+                                        {previousSongs.map((song, i) => (
+                                            <li key={i} className="fs-history-item">{song}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
-                            {previousSongs.length === 0 ? (
-                                <p className="history-empty">No recommendation yet</p>
-                            ) : (
-                                <ul className="history-list">
-                                    {previousSongs.map((song, index) => (
-                                        <li key={index} className="history-item">{song}</li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
-                
 
-                {loading && <p className="loading">Loading your Spotify data...</p>}
-                {error && <p className="error">{error}</p>}
+                {loading && <p className="fs-loading">Loading your Spotify data...</p>}
+                {error && <p className="fs-error">{error}</p>}
 
                 {!loading && !error && (
-                    <div className="content-layout">
-                        {/* Left Column - Top Tracks */}
-                        <section className="tracks-column">
-                            <h2>Your Top Tracks</h2>
-                            <div className="tracks-list">
+                    <div className="fs-content-layout">
+
+                        {/* Left — Top Tracks */}
+                        <section className="fs-column fs-tracks-column">
+                            <h2 className="fs-column-title">Your Top Tracks</h2>
+                            <div className="fs-list">
                                 {topTracks.map((track, index) => (
-                                    <div key={track.id || index} className="track-item-wrapper">
-                                        <div 
-                                            className="track-item" 
-                                            onClick={() => setSelectedItem( 
-                                                selectedItem?.type === "track" && selectedItem?.name === track.name 
-                                                ? null 
-                                                : {type: "track", name: track.name, artist: track.artists?.map(a => a.name).join(", ")}
+                                    <div key={track.id || index} className="fs-item-wrapper">
+                                        <div
+                                            className={`fs-item ${selectedItem?.type === "track" && selectedItem?.name === track.name ? "fs-item-selected" : ""}`}
+                                            onClick={() => setSelectedItem(
+                                                selectedItem?.type === "track" && selectedItem?.name === track.name
+                                                    ? null
+                                                    : { type: "track", name: track.name, artist: track.artists?.map(a => a.name).join(", ") }
                                             )}
                                         >
-                                            <span className="track-number">{index + 1}</span>
+                                            <span className="fs-item-number">{index + 1}</span>
                                             {track.album?.images?.length > 0 && (
                                                 <img
                                                     src={track.album.images[2]?.url || track.album.images[0]?.url}
                                                     alt={track.album?.name || "Album"}
-                                                    className="track-image"
+                                                    className="fs-item-img"
                                                 />
                                             )}
-                                            <div className="track-info">
-                                                <span className="track-name">{track.name}</span>
-                                                <span className="track-artist">
-                                                    {track.artists?.map(a => a.name).join(", ") || "Unknown"}
-                                                </span>
+                                            <div className="fs-item-info">
+                                                <span className="fs-item-name">{track.name}</span>
+                                                <span className="fs-item-sub">{track.artists?.map(a => a.name).join(", ") || "Unknown"}</span>
                                             </div>
                                         </div>
-                                        {/* Popp for this track */}
                                         {selectedItem?.type === "track" && selectedItem?.name === track.name && (
-                                            <div className="similar-popup">
-                                                <p>Generate similar song?</p>
-                                                <button 
-                                                    className="popup-yes-btn"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        generateRecommendation(null, {
-                                                            type: "track",
-                                                            name: track.name,
-                                                            artistName: track.artists?.[0]?.name
-                                                        })
-                                                    }}>
-                                                    Yes
+                                            <div className="fs-popup">
+                                                <p>Generate a similar song?</p>
+                                                <button className="fs-popup-btn" onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    generateRecommendation(null, { type: "track", name: track.name, artistName: track.artists?.[0]?.name })
+                                                }}>
+                                                    Yes, generate
                                                 </button>
                                             </div>
                                         )}
@@ -345,137 +337,115 @@ export default function FindSongs() {
                             </div>
                         </section>
 
-                        {/* Middle Column - Recommendations */}
-                        <section className="recommendation-column">
+                        {/* Middle — Recommendation */}
+                        <section className="fs-recommendation-column">
                             <button
-                                className="generate-btn"
+                                className="fs-generate-btn"
                                 onClick={() => generateRecommendation(null)}
                                 disabled={isGenerating || topTracks.length === 0}
                             >
-                                {isGenerating ? "Generating..." : "Generate random new song"}
+                                {isGenerating ? "Generating…" : "Generate random new song"}
                             </button>
 
                             {recommendedSong ? (
                                 <>
-
-                                <div className="player-difficulty-row">
-                                    {/* Spotify Embed Player */}
-                                    {recommendedSong.spotifyId && (
-                                        <iframe
-                                            src={`https://open.spotify.com/embed/track/${recommendedSong.spotifyId}?utm_source=generator&theme=1&size=large`}
-                                            height="152"
-                                            width="100%"
-                                            style={{ borderRadius: "12px", minWidth: "400px", border: "none"}}
-                                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                            loading="lazy"
-                                        />
-                                    )}
-
-                                    <div className="difficulty-section">
-                                        <h3 className="difficulty-header"> Adjust Difficulty</h3>
-                                        <div className="difficulty-controls">
-                                            <button
-                                                className="difficulty-arrow-btn"
-                                                onClick={() => generateRecommendation("down")}
-                                                disabled={isGenerating || (recommendedSong?.difficulty || 0) <= 1}
-                                            >
-                                                ◀
-                                            </button>
-
-                                            <div className="star-rating">
-                                                {[1, 2, 3, 4, 5].map((star) => (
-                                                    <span
-                                                        key={star}
-                                                        className={`star ${star <= recommendedSong.difficulty ? 'filled' : ''}`}
-                                                    >
-                                                        ★
-                                                    </span>
-                                                ))}
+                                    <div className="fs-player-row">
+                                        {recommendedSong.spotifyId && (
+                                            <iframe
+                                                src={`https://open.spotify.com/embed/track/${recommendedSong.spotifyId}?utm_source=generator&theme=1`}
+                                                height="152"
+                                                width="100%"
+                                                style={{ borderRadius: "12px", border: "none", minWidth: "280px" }}
+                                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                                loading="lazy"
+                                            />
+                                        )}
+                                        <div className="fs-difficulty">
+                                            <h3 className="fs-difficulty-label">Adjust Difficulty</h3>
+                                            <div className="fs-difficulty-controls">
+                                                <button
+                                                    className="fs-arrow-btn"
+                                                    onClick={() => generateRecommendation("down")}
+                                                    disabled={isGenerating || (recommendedSong?.difficulty || 0) <= 1}
+                                                >◀</button>
+                                                <div className="fs-stars">
+                                                    {[1, 2, 3, 4, 5].map(star => (
+                                                        <span key={star} className={`fs-star ${star <= recommendedSong.difficulty ? "filled" : ""}`}>★</span>
+                                                    ))}
+                                                </div>
+                                                <button
+                                                    className="fs-arrow-btn"
+                                                    onClick={() => generateRecommendation("up")}
+                                                    disabled={isGenerating || (recommendedSong?.difficulty || 0) >= 5}
+                                                >▶</button>
                                             </div>
-
-                                            <button
-                                                className="difficulty-arrow-btn"
-                                                onClick={() => generateRecommendation("up")}
-                                                disabled={isGenerating || (recommendedSong?.difficulty || 0) >= 5}
-                                            >
-                                                ▶
-                                            </button>
                                         </div>
                                     </div>
 
-                                </div>
-                                
-
-                                    <div className="info-boxes">
-                                        <div className="info-box">
-                                            <h3><u>Guitar skills involved:</u></h3>
+                                    <div className="fs-info-boxes">
+                                        <div className="fs-info-box">
+                                            <h3 className="fs-info-box-title">Guitar Skills Involved</h3>
                                             {recommendedSong.skills.map((skill, idx) => (
-                                                <p key={idx}>{skill}</p>
+                                                <p key={idx} className="fs-info-box-item">• {skill}</p>
                                             ))}
                                         </div>
-
-                                        <div className="info-box">
-                                            <h3><u>Description:</u></h3>
-                                            <p>{recommendedSong.description}</p>
+                                        <div className="fs-info-box">
+                                            <h3 className="fs-info-box-title">Description</h3>
+                                            <p className="fs-info-box-body">{recommendedSong.description}</p>
                                         </div>
                                     </div>
                                 </>
                             ) : (
-                                <div className="empty-recommendation">
-                                    <p>Click "Generate new song" to get a personalized recommendation based on your listening history! </p>
-                                    <p>You can also click on one of your listed artists or songs and get an even more specified recommendation</p>
+                                <div className="fs-empty">
+                                    <div className="fs-empty-icon">🎸</div>
+                                    <p>Click <strong>"Generate random new song"</strong> for a recommendation based on your listening history.</p>
+                                    <p>Or click any track or artist to get a more targeted suggestion.</p>
                                 </div>
                             )}
                         </section>
 
-                        {/* Right Column - Top Artists */}
-                        <section className="artists-column">
-                            <h2>Your Top Artists</h2>
-                            <div className="artists-list">
+                        {/* Right — Top Artists */}
+                        <section className="fs-column fs-artists-column">
+                            <h2 className="fs-column-title">Your Top Artists</h2>
+                            <div className="fs-list">
                                 {topArtists.map((artist, index) => (
-                                    <div key={artist.id || index} className="artist-item-wrapper">
-                                        <div 
-                                            className="artist-item"
-                                            onClick={() => setSelectedItem( 
+                                    <div key={artist.id || index} className="fs-item-wrapper">
+                                        <div
+                                            className={`fs-item ${selectedItem?.type === "artist" && selectedItem?.name === artist.name ? "fs-item-selected" : ""}`}
+                                            onClick={() => setSelectedItem(
                                                 selectedItem?.type === "artist" && selectedItem?.name === artist.name
                                                     ? null
                                                     : { type: "artist", name: artist.name }
                                             )}
                                         >
-                                            <span className="track-number">{index + 1}</span>
+                                            <span className="fs-item-number">{index + 1}</span>
                                             {artist.images?.length > 0 && (
                                                 <img
                                                     src={artist.images[2]?.url || artist.images[0]?.url}
                                                     alt={artist.name}
-                                                    className="artist-image"
+                                                    className="fs-item-img fs-item-img-round"
                                                 />
                                             )}
-                                            <div className="artist-info">
-                                                <span className="artist-name">{artist.name}</span>
+                                            <div className="fs-item-info">
+                                                <span className="fs-item-name">{artist.name}</span>
                                             </div>
                                         </div>
-                                    {/* Popup for the artists */}
-                                    {selectedItem?.type === "artist" && selectedItem?.name === artist.name && (
-                                        <div className="similar-popup">
-                                            <p>Generate similar song by {artist.name}</p>
-                                            <button 
-                                                className="popup-yes-btn" 
-                                                onClick={(e) => {
+                                        {selectedItem?.type === "artist" && selectedItem?.name === artist.name && (
+                                            <div className="fs-popup">
+                                                <p>Generate a song by {artist.name}?</p>
+                                                <button className="fs-popup-btn" onClick={(e) => {
                                                     e.stopPropagation()
-                                                    generateRecommendation(null, {
-                                                        type: "artist",
-                                                        name: artist.name
-                                                    })
-                                                }}
-                                            >
-                                                Yes
-                                            </button>
-                                        </div>
-                                    )}
+                                                    generateRecommendation(null, { type: "artist", name: artist.name })
+                                                }}>
+                                                    Yes, generate
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
                         </section>
+
                     </div>
                 )}
             </main>
