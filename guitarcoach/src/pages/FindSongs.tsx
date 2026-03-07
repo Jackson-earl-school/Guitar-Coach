@@ -354,7 +354,8 @@ export default function FindSongs() {
                                                 src={`https://open.spotify.com/embed/track/${recommendedSong.spotifyId}?utm_source=generator&theme=1`}
                                                 height="152"
                                                 width="100%"
-                                                style={{ borderRadius: "12px", border: "none", minWidth: "280px" }}
+                                                className="fs-spotify-embed"
+                                                title={`Spotify player for ${recommendedSong.name}`}
                                                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                                                 loading="lazy"
                                             />
