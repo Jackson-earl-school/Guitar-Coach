@@ -7,10 +7,27 @@ import "../style/Dashboard.css"
 import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 
+
 const API_BASE = "http://127.0.0.1:8000"
 
 const CACHE_KEY_USERNAME = "gc_username"
 const CACHE_KEY_SPOTIFY  = "gc_spotify_connected"
+
+type Task = {
+  title: string
+  duration_minutes: number
+  instructions: string
+}
+
+type PracticePlan = {
+  song_title: string
+  artist: string
+  days: { day: string; tasks: Task[] }[]
+}
+
+function getTodayName() {
+  return new Date().toLocaleDateString("en-US", { weekday: "long" })
+}
 
 function Dashboard() {
     const navigate = useNavigate()
@@ -23,6 +40,9 @@ function Dashboard() {
     const [spotifyConnected, setSpotifyConnected] = useState<boolean>(
         () => localStorage.getItem(CACHE_KEY_SPOTIFY) === "true"
     )
+
+    const [todayTasks, setTodayTasks] = useState<Task[]>([])
+    const [planInfo, setPlanInfo] = useState<{ song: string; artist: string } | null>(null)
 
     useEffect(() => {
         if (searchParams.get("spotify_connected")) {
@@ -77,6 +97,23 @@ function Dashboard() {
         })()
     }, [navigate, searchParams])
 
+    useEffect(() => {
+        const stored = localStorage.getItem("activePracticePlan")
+        if (!stored) return
+
+        try {
+            const plan: PracticePlan = JSON.parse(stored)
+            const today = getTodayName()
+            const todayDay = plan.days?.find((d) => d.day === today)
+            if (todayDay) {
+                setTodayTasks(todayDay.tasks || [])
+                setPlanInfo({ song: plan.song_title, artist: plan.artist })
+            }
+        } catch (e) {
+            console.error("Failed to parse active plan:", e)
+        }
+    }, [])
+
     async function connectSpotify() {
         const { data: sessionData } = await supabase.auth.getSession()
         const token = sessionData.session?.access_token
@@ -113,80 +150,113 @@ function Dashboard() {
                 </div>
             </nav>
 
-                <section className="dashboard-hero">
-                    <div className="dashboard-hero-content">
-                        <p className="dashboard-eyebrow">Welcome back</p>
-                        <h1 className="dashboard-your-dashboard">
-                            {`${username}'s Dashboard`}
-                        </h1>
-                        <p className="dashboard-sub">Pick up where you left off.</p>
+            <section className="dashboard-hero">
+                <div className="dashboard-hero-content">
+                    <p className="dashboard-eyebrow">Welcome back</p>
+                    <h1 className="dashboard-your-dashboard">
+                        {`${username}'s Dashboard`}
+                    </h1>
+                    <p className="dashboard-sub">Pick up where you left off.</p>
+                </div>
+            </section>
+
+            {spotifyConnected === false && (
+                <div className="spotify-banner">
+                    <div className="spotify-banner-content">
+                        <div className="spotify-banner-text">
+                            <span className="spotify-banner-icon">🎵</span>
+                            <div>
+                                <strong>Connect your Spotify account</strong>
+                                <p>Link Spotify to get personalized song recommendations based on your listening history.</p>
+                            </div>
+                        </div>
+                        <button className="spotify-banner-btn" onClick={connectSpotify}>
+                            Connect Spotify
+                        </button>
                     </div>
+                </div>
+            )}
+
+            <main className="dashboard-main">
+                <section className="dashboard-content">
+                    <div className="dashboard-grid">
+                        <div className="dashboard-card" onClick={() => window.location.href = '/find-songs'}>
+                            <div className="card-bg card-bg--1"></div>
+                            <div className="card-overlay"></div>
+                            <div className="card-text">
+                                <span className="card-label">Discover</span>
+                                <h2>Find New Songs</h2>
+                            </div>
+                        </div>
+
+                        <div className="dashboard-card" onClick={() => window.location.href = '/schedule'}>
+                            <div className="card-bg card-bg--2"></div>
+                            <div className="card-overlay"></div>
+                            <div className="card-text">
+                                <span className="card-label">Plan</span>
+                                <h2>My Schedule</h2>
+                            </div>
+                        </div>
+
+                        <div className="dashboard-card" onClick={() => window.location.href = '/practice-plans'}>
+                            <div className="card-bg card-bg--3"></div>
+                            <div className="card-overlay"></div>
+                            <div className="card-text">
+                                <span className="card-label">Practice</span>
+                                <h2>Generate Practice Plans</h2>
+                            </div>
+                        </div>
+
+                        <div className="dashboard-card" onClick={() => window.location.href = '/progress'}>
+                            <div className="card-bg card-bg--4"></div>
+                            <div className="card-overlay"></div>
+                            <div className="card-text">
+                                <span className="card-label">Track</span>
+                                <h2>Overall Progress</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* today's tasks panel */}
+                    <div className="tasks-panel">
+                        <h2 className="tasks-title">Today's Tasks</h2>
+
+                        {todayTasks.length === 0 ? (
+                            <div>
+                                <p style={{ fontSize: 14, color: "#888", margin: "0 0 8px" }}>
+                                    No tasks for today.
+                                </p>
+                                <a href="/practice-plans" style={{ fontSize: 13, color: "#B57F50", fontWeight: 600 }}>
+                                    Generate a practice plan →
+                                </a>
+                            </div>
+                        ) : (
+                            <div>
+                                {planInfo && (
+                                    <p style={{ fontSize: 13, fontWeight: 600, margin: "0 0 14px", paddingBottom: 10, borderBottom: "1px solid #eee", color: "#333" }}>
+                                        {planInfo.song} — <span style={{ fontWeight: 400, color: "#666" }}>{planInfo.artist}</span>
+                                    </p>
+                                )}
+                                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                                    {todayTasks.map((task, i) => (
+                                        <div key={i} style={{ borderBottom: "1px solid #eee", paddingBottom: 10 }}>
+                                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                                                <span style={{ fontSize: 13, fontWeight: 600, color: "#222" }}>{task.title}</span>
+                                                <span style={{ fontSize: 12, color: "#999", whiteSpace: "nowrap" }}>{task.duration_minutes} min</span>
+                                            </div>
+                                            <p style={{ margin: 0, fontSize: 13, color: "#555", lineHeight: 1.5 }}>{task.instructions}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <a href="/practice-plans" style={{ display: "block", marginTop: 14, fontSize: 13, color: "#B57F50", fontWeight: 600 }}>
+                                    View full plan →
+                                </a>
+                            </div>
+                        )}
+                    </div>
+
                 </section>
-
-                {spotifyConnected === false && (
-                    <div className="spotify-banner">
-                        <div className="spotify-banner-content">
-                            <div className="spotify-banner-text">
-                                <span className="spotify-banner-icon">🎵</span>
-                                <div>
-                                    <strong>Connect your Spotify account</strong>
-                                    <p>Link Spotify to get personalized song recommendations based on your listening history.</p>
-                                </div>
-                            </div>
-                            <button className="spotify-banner-btn" onClick={connectSpotify}>
-                                Connect Spotify
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                <main className="dashboard-main">
-                    <section className="dashboard-content">
-                        <div className="dashboard-grid">
-                            <div className="dashboard-card" onClick={() => window.location.href = '/find-songs'}>
-                                <div className="card-bg card-bg--1"></div>
-                                <div className="card-overlay"></div>
-                                <div className="card-text">
-                                    <span className="card-label">Discover</span>
-                                    <h2>Find New Songs</h2>
-                                </div>
-                            </div>
-
-                            <div className="dashboard-card" onClick={() => window.location.href = '/schedule'}>
-                                <div className="card-bg card-bg--2"></div>
-                                <div className="card-overlay"></div>
-                                <div className="card-text">
-                                    <span className="card-label">Plan</span>
-                                    <h2>My Schedule</h2>
-                                </div>
-                            </div>
-
-                            <div className="dashboard-card" onClick={() => window.location.href = '/practice-plans'}>
-                                <div className="card-bg card-bg--3"></div>
-                                <div className="card-overlay"></div>
-                                <div className="card-text">
-                                    <span className="card-label">Practice</span>
-                                    <h2>Generate Practice Plans</h2>
-                                </div>
-                            </div>
-
-                            <div className="dashboard-card" onClick={() => window.location.href = '/progress'}>
-                                <div className="card-bg card-bg--4"></div>
-                                <div className="card-overlay"></div>
-                                <div className="card-text">
-                                    <span className="card-label">Track</span>
-                                    <h2>Overall Progress</h2>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="tasks-panel">
-                            <h2 className="tasks-title">Today's Tasks</h2>
-                            <p className="tasks-empty">Fill out a practice plan to create new tasks.</p>
-                        </div>
-
-                    </section>
-                </main>
+            </main>
 
             <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top dashboard-footer">
                 <span className="mb-3 mb-md-0 text-body-secondary"> © 2026 GuitarCoach, Inc </span>
