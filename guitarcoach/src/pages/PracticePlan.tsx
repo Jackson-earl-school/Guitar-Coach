@@ -98,6 +98,7 @@ export default function PracticePlanPage() {
         setError(data?.detail ?? "Failed to generate practice plan.")
       } else {
         setResult(data)
+        localStorage.setItem("activePracticePlan", JSON.stringify(data))
       }
     } catch (e: any) {
       setError(e?.message ?? "Network error.")
@@ -176,6 +177,7 @@ export default function PracticePlanPage() {
     setResult(saved.plan)
     setExpandedTask(null)
     setActiveTab("generate")
+    localStorage.setItem("activePracticePlan", JSON.stringify(saved.plan))
   }
 
   const canGenerate = !!songTitle.trim() && !!artist.trim() && !loading
