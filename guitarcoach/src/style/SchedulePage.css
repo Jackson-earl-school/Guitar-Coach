@@ -78,3 +78,67 @@
     background-color: white;
     padding: 50px 20px;
 }
+
+/* ── Plan info & empty state ── */
+.schedule-plan-info {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.schedule-empty {
+    text-align: center;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.schedule-empty a {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* task items */
+.task-item {
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    list-style: none;
+}
+
+.task-item--empty {
+    color: #aaa;
+    font-size: 13px;
+    list-style: none;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.task-item-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #222;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.task-item-duration {
+    font-size: 11px;
+    color: #B57F50;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* instructions */
+.task-instructions-list {
+    padding-left: 16px;
+    margin: 4px 0 0 0;
+}
+
+.task-instructions-list li {
+    font-size: 12px;
+    color: #000000;
+    line-height: 1.5;
+}
