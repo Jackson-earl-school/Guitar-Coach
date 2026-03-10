@@ -298,3 +298,86 @@
 .card-bg--4 {
     background-image: url('../images/tasks.webp');
 }
+
+/* ── Task List with Checkboxes ── */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.task-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    transition: opacity 0.2s ease;
+}
+
+.task-row:last-child {
+    border-bottom: none;
+}
+
+.task-checkbox {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin-top: 1px;
+    accent-color: #B57F50;
+    cursor: pointer;
+}
+
+.task-checkbox:hover {
+    transform: scale(1.1);
+}
+
+.task-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.task-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #222;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.task-duration {
+    font-size: 12px;
+    color: #999;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.task-instructions {
+    margin: 0;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+/* Completed States */
+.task-row--completed {
+    opacity: 0.75;
+}
+
+.task-title--completed {
+    text-decoration: line-through;
+    color: #666;
+}
+
+.task-instructions--completed {
+    text-decoration: line-through;
+    color: #666;
+}

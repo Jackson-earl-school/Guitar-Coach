@@ -3,7 +3,9 @@ import { supabase } from "../supabaseClient"
 import { getSkillScores, getPlayerType } from "./utils/getSkillsScore"
 import { useEffect, useState } from "react"
 
-import type { SkillScore, QuestionnaireAnswers } from "./utils/getSkillsScore"
+import type { SkillScore, QuestionnaireAnswers, CompletionStats } from "./utils/getSkillsScore"
+
+const API_BASE = "http://127.0.0.1:8000"
 
 import "bootstrap/dist/css/bootstrap.css"
 import "../style/ProgressPage.css"
@@ -120,6 +122,7 @@ export default function ProgressPage() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [selectedSkill, setSelectedSkill] = useState<string | null>(null)
+    const [completionStats, setCompletionStats] = useState<CompletionStats | null>(null)
 
     // Get the value for a questionnaire answer to display in popup
     function getAnswerDisplay(factor: string): string {
@@ -189,47 +192,63 @@ export default function ProgressPage() {
     }
 
     useEffect(() => {
-        fetchQuestionnaireData()
+        fetchProgressData()
     }, [])
 
-    async function fetchQuestionnaireData() {
+    async function fetchProgressData() {
         try {
             const { data: sessionData } = await supabase.auth.getSession()
             const userId = sessionData.session?.user?.id
+            const token = sessionData.session?.access_token
 
-            if (!userId) {
+            if (!userId || !token) {
                 setError("Please log in to view your progress")
                 setLoading(false)
                 return
             }
 
-            const { data, error: fetchError } = await supabase
-                .from("profiles")
-                .select("questionnaire_answers")
-                .eq("id", userId)
-                .single()
+            // Fetch questionnaire answers and completion stats in parallel
+            const [profileRes, statsRes] = await Promise.all([
+                supabase
+                    .from("profiles")
+                    .select("questionnaire_answers")
+                    .eq("id", userId)
+                    .single(),
+                fetch(`${API_BASE}/api/practice-plan/completion-stats`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+            ])
 
-            if (fetchError) {
-                console.error("Error fetching questionnaire:", fetchError)
+            if (profileRes.error) {
+                console.error("Error fetching questionnaire:", profileRes.error)
                 setError("Failed to load your data")
                 setLoading(false)
                 return
             }
 
-            if (!data?.questionnaire_answers) {
+            if (!profileRes.data?.questionnaire_answers) {
                 setError("Complete the questionnaire first to see your skill radar")
                 setLoading(false)
                 return
             }
 
-            const questionnaireAnswers: QuestionnaireAnswers = data.questionnaire_answers
+            const questionnaireAnswers: QuestionnaireAnswers = profileRes.data.questionnaire_answers
             setAnswers(questionnaireAnswers)
-            const scores = getSkillScores(questionnaireAnswers)
+
+            // Parse completion stats if available
+            let stats: CompletionStats | null = null
+            if (statsRes.ok) {
+                stats = await statsRes.json()
+                setCompletionStats(stats)
+            }
+
+            // Calculate scores with completion boosts
+            const scores = getSkillScores(questionnaireAnswers, stats || undefined)
             setSkillScores(scores)
             setPlayerType(getPlayerType(questionnaireAnswers))
             setLoading(false)
         } catch (err) {
-            console.error("Failed to fetch questionnaire data:", err)
+            console.error("Failed to fetch progress data:", err)
             setError("Something went wrong")
             setLoading(false)
         }
@@ -274,7 +293,7 @@ export default function ProgressPage() {
                 <div className="progress-hero-content">
                     <p className="progress-eyebrow">Track</p>
                     <h1 className="progress-title">Overall Progress</h1>
-                    <p className="progress-sub">Your skill breakdown based on questionnaire answers.</p>
+                    <p className="progress-sub">Your skill breakdown based on questionnaire answers and completed practice tasks.</p>
                 </div>
             </section>
 
@@ -346,6 +365,24 @@ export default function ProgressPage() {
                                 <h3 className="emblem-title">{playerType}</h3>
                                 <p className="emblem-subtitle">Current Level</p>
                             </div>
+
+                            {/* Practice stats */}
+                            {completionStats && completionStats.total_completed > 0 && (
+                                <div className="progress-card practice-stats-card">
+                                    <h3 className="stats-title">Practice Stats</h3>
+                                    <div className="stats-grid">
+                                        <div className="stat-item">
+                                            <span className="stat-value">{completionStats.total_completed}</span>
+                                            <span className="stat-label">Tasks Completed</span>
+                                        </div>
+                                        <div className="stat-item">
+                                            <span className="stat-value">{completionStats.total_minutes}</span>
+                                            <span className="stat-label">Minutes Practiced</span>
+                                        </div>
+                                    </div>
+                                    <p className="stats-hint">Completed tasks boost your skill scores!</p>
+                                </div>
+                            )}
 
                             {/* Questionnaire answers */}
                             <div className="progress-card">

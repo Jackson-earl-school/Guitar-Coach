@@ -99,6 +99,8 @@ export default function PracticePlanPage() {
       } else {
         setResult(data)
         localStorage.setItem("activePracticePlan", JSON.stringify(data))
+        // Note: Generated plans don't have an ID until saved
+        localStorage.removeItem("activePracticePlanId")
       }
     } catch (e: any) {
       setError(e?.message ?? "Network error.")
@@ -125,7 +127,19 @@ export default function PracticePlanPage() {
       })
 
       if (res.ok) {
-        await fetchSavedPlans()
+        // Fetch saved plans and find the newly saved one
+        const savedRes = await fetch(`${API}/api/practice-plan/saved`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        const savedData = await savedRes.json()
+        setSavedPlans(savedData)
+
+        const matchingPlan = savedData.find(
+          (p: SavedPlan) => p.song_title === result.song_title && p.artist === result.artist
+        )
+        if (matchingPlan) {
+          localStorage.setItem("activePracticePlanId", matchingPlan.id)
+        }
       } else {
         const data = await res.json()
         console.error("Save failed:", data)
@@ -178,6 +192,7 @@ export default function PracticePlanPage() {
     setExpandedTask(null)
     setActiveTab("generate")
     localStorage.setItem("activePracticePlan", JSON.stringify(saved.plan))
+    localStorage.setItem("activePracticePlanId", saved.id)
   }
 
   const canGenerate = !!songTitle.trim() && !!artist.trim() && !loading

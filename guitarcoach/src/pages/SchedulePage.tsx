@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react"
+import { supabase } from "../supabaseClient"
 import "../style/SchedulePage.css"
 import { Link } from 'react-router-dom'
+
+const API_BASE = "http://127.0.0.1:8000"
 
 type Task = {
     title: string
     duration_minutes: number
     instructions: string
+    technique?: string
 }
 
 type Day = {
@@ -23,16 +27,85 @@ const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 
 function SchedulePage() {
     const [plan, setPlan] = useState<PracticePlan | null>(null)
+    const [planId, setPlanId] = useState<string | null>(null)
+    const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set())
 
     useEffect(() => {
         const stored = localStorage.getItem("activePracticePlan")
+        const storedPlanId = localStorage.getItem("activePracticePlanId")
         if (!stored) return
         try {
             setPlan(JSON.parse(stored))
+            if (storedPlanId) {
+                setPlanId(storedPlanId)
+                fetchCompletions(storedPlanId)
+            }
         } catch (e) {
             console.error("Failed to parse active plan:", e)
         }
     }, [])
+
+    async function fetchCompletions(planId: string) {
+        const { data: sessionData } = await supabase.auth.getSession()
+        const token = sessionData.session?.access_token
+        if (!token) return
+
+        try {
+            const res = await fetch(`${API_BASE}/api/practice-plan/completions/${planId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            const completions = await res.json()
+            const keys = completions.map((c: any) => `${c.day_name}-${c.task_index}`)
+            setCompletedTasks(new Set(keys))
+        } catch (e) {
+            console.error("Failed to fetch completions:", e)
+        }
+    }
+
+    async function toggleTaskCompletion(dayName: string, taskIndex: number, task: Task) {
+        const { data: sessionData } = await supabase.auth.getSession()
+        const token = sessionData.session?.access_token
+        if (!token || !planId) return
+
+        const key = `${dayName}-${taskIndex}`
+        const isCompleted = completedTasks.has(key)
+
+        try {
+            if (isCompleted) {
+                await fetch(
+                    `${API_BASE}/api/practice-plan/complete-task?plan_id=${planId}&day_name=${dayName}&task_index=${taskIndex}`,
+                    {
+                        method: "DELETE",
+                        headers: { Authorization: `Bearer ${token}` }
+                    }
+                )
+                setCompletedTasks(prev => {
+                    const next = new Set(prev)
+                    next.delete(key)
+                    return next
+                })
+            } else {
+                await fetch(`${API_BASE}/api/practice-plan/complete-task`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        plan_id: planId,
+                        day_name: dayName,
+                        task_index: taskIndex,
+                        task_title: task.title,
+                        technique: task.technique || null,
+                        duration_minutes: task.duration_minutes
+                    })
+                })
+                setCompletedTasks(prev => new Set(prev).add(key))
+            }
+        } catch (e) {
+            console.error("Failed to toggle task:", e)
+        }
+    }
 
     function getTasksForDay(dayName: string): Task[] {
         if (!plan) return []
@@ -88,14 +161,28 @@ function SchedulePage() {
                                     {tasks.length === 0 ? (
                                         <li className="task-item task-item--empty">—</li>
                                     ) : (
-                                        tasks.map((task, i) => (
-                                            <li key={i} className="task-item">
-                                                <span className="task-item-name">{task.title} — {task.duration_minutes} min</span>
-                                                <ul className="task-instructions-list">
+                                        tasks.map((task, i) => {
+                                        const key = `${dayName}-${i}`
+                                        const isCompleted = completedTasks.has(key)
+                                        return (
+                                            <li key={i} className={`task-item ${isCompleted ? "task-item--completed" : ""}`}>
+                                                <label className="task-item-label">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="schedule-checkbox"
+                                                        checked={isCompleted}
+                                                        onChange={() => toggleTaskCompletion(dayName, i, task)}
+                                                    />
+                                                    <span className={`task-item-name ${isCompleted ? "task-name--completed" : ""}`}>
+                                                        {task.title} — {task.duration_minutes} min
+                                                    </span>
+                                                </label>
+                                                <ul className={`task-instructions-list ${isCompleted ? "task-instructions--completed" : ""}`}>
                                                     <li>{task.instructions}</li>
                                                 </ul>
                                             </li>
-                                        ))
+                                        )
+                                    })
                                     )}
                                 </ul>
                             </div>

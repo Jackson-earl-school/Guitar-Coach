@@ -16,6 +16,82 @@ export interface SkillScore {
     value: number   // 0–1
 }
 
+export interface CompletionStats {
+    total_completed: number
+    total_minutes: number
+    by_technique: Record<string, number>  // technique -> total minutes
+}
+
+// ─── Technique to Skill Mapping ──────────────────────────────────────────────
+// Maps technique keywords to the skill they boost
+const TECHNIQUE_SKILL_MAP: Record<string, string> = {
+    'chord': 'Chord Fluency',
+    'transition': 'Chord Fluency',
+    'fingering': 'Chord Fluency',
+    'switching': 'Chord Fluency',
+    'strum': 'Rhythm & Feel',
+    'rhythm': 'Rhythm & Feel',
+    'timing': 'Rhythm & Feel',
+    'tempo': 'Rhythm & Feel',
+    'scale': 'Theory',
+    'theory': 'Theory',
+    'progression': 'Theory',
+    'key': 'Theory',
+    'bend': 'Technical Skill',
+    'hammer': 'Technical Skill',
+    'pull-off': 'Technical Skill',
+    'slide': 'Technical Skill',
+    'vibrato': 'Technical Skill',
+    'technique': 'Technical Skill',
+    'solo': 'Lead & Soloing',
+    'lead': 'Lead & Soloing',
+    'improv': 'Lead & Soloing',
+    'melody': 'Lead & Soloing',
+    'lick': 'Lead & Soloing',
+}
+
+// Calculate boost from completed tasks
+// Returns a map of skill name -> boost value (0-0.15 max per skill)
+function calculateCompletionBoosts(stats: CompletionStats): Record<string, number> {
+    const boosts: Record<string, number> = {}
+
+    for (const [technique, minutes] of Object.entries(stats.by_technique)) {
+        const techLower = technique.toLowerCase()
+
+        // Find which skill this technique maps to
+        let matchedSkill: string | null = null
+        for (const [keyword, skill] of Object.entries(TECHNIQUE_SKILL_MAP)) {
+            if (techLower.includes(keyword)) {
+                matchedSkill = skill
+                break
+            }
+        }
+
+        // Default to Technical Skill if no match found
+        if (!matchedSkill) {
+            matchedSkill = 'Technical Skill'
+        }
+
+        // Calculate boost: minutes / 600 (so 60 min = 0.1 boost)
+        const boost = minutes / 600
+        boosts[matchedSkill] = (boosts[matchedSkill] || 0) + boost
+    }
+
+    // Cap each skill boost at 0.15 to prevent inflation
+    for (const skill of Object.keys(boosts)) {
+        boosts[skill] = Math.min(boosts[skill], 0.15)
+    }
+
+    // Add a small Goal Orientation boost based on total completions
+    // Completing tasks shows commitment
+    if (stats.total_completed > 0) {
+        const goalBoost = Math.min(stats.total_completed * 0.01, 0.1)
+        boosts['Goal Orientation'] = (boosts['Goal Orientation'] || 0) + goalBoost
+    }
+
+    return boosts
+}
+
 // ─── Individual scorers ───────────────────────────────────────────────────────
 
 function scoreTechnicalSkill(answers: QuestionnaireAnswers): number {
@@ -168,8 +244,12 @@ export function getPlayerType(answers: QuestionnaireAnswers) : string {
 }
 
 
-export function getSkillScores(answers: QuestionnaireAnswers): SkillScore[] {
-    return [
+export function getSkillScores(
+    answers: QuestionnaireAnswers,
+    completionStats?: CompletionStats
+): SkillScore[] {
+    // Calculate base scores from questionnaire
+    const baseScores: SkillScore[] = [
         { axis: 'Technical Skill',  value: scoreTechnicalSkill(answers) },
         { axis: 'Chord Fluency',    value: scoreChordFluency(answers) },
         { axis: 'Experience',       value: scoreExperience(answers) },
@@ -178,5 +258,19 @@ export function getSkillScores(answers: QuestionnaireAnswers): SkillScore[] {
         { axis: 'Goal Orientation', value: scoreGoalOrientation(answers) },
         { axis: 'Lead & Soloing',   value: scoreSoloing(answers)}
     ]
+
+    // If no completion stats, return base scores
+    if (!completionStats || completionStats.total_completed === 0) {
+        return baseScores
+    }
+
+    // Calculate boosts from completed tasks
+    const boosts = calculateCompletionBoosts(completionStats)
+
+    // Apply boosts to base scores (capped at 1.0)
+    return baseScores.map(score => ({
+        axis: score.axis,
+        value: Math.min(1.0, score.value + (boosts[score.axis] || 0))
+    }))
 }
 

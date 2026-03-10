@@ -261,6 +261,8 @@ export default function FindSongs() {
                         ))}
                     </div>
 
+                    <p className="fs-hint">Click on any of your tracks or artists to generate a similar song</p>
+
                     <div className="fs-history-wrapper">
                         <button className="fs-history-btn" onClick={() => setShowHistory(!showHistory)}>
                             {showHistory ? "Hide history" : "View recommendation history"}

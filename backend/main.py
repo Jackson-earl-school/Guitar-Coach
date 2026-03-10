@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,9 +13,11 @@ load_dotenv()
 
 app = FastAPI()
 
+FRONTEND_URL = os.environ["FRONTEND_URL"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[FRONTEND_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

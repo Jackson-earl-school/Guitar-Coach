@@ -17,6 +17,7 @@ type Task = {
   title: string
   duration_minutes: number
   instructions: string
+  technique?: string
 }
 
 type PracticePlan = {
@@ -25,6 +26,8 @@ type PracticePlan = {
   days: { day: string; tasks: Task[] }[]
 }
 
+type CompletionKey = string
+
 function getTodayName() {
   return new Date().toLocaleDateString("en-US", { weekday: "long" })
 }
@@ -32,6 +35,8 @@ function getTodayName() {
 function Dashboard() {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
+    const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set())
+    const [planId, setPlanId] = useState<string | null>(null)
 
     // Read cache instantly so the UI renders correctly on the first frame
     const [username, setUsername] = useState<string>(
@@ -99,6 +104,7 @@ function Dashboard() {
 
     useEffect(() => {
         const stored = localStorage.getItem("activePracticePlan")
+        const storedPlanId = localStorage.getItem("activePracticePlanId")
         if (!stored) return
 
         try {
@@ -109,10 +115,80 @@ function Dashboard() {
                 setTodayTasks(todayDay.tasks || [])
                 setPlanInfo({ song: plan.song_title, artist: plan.artist })
             }
+
+            if (storedPlanId) {
+                setPlanId(storedPlanId)
+                fetchCompletions(storedPlanId)
+            }
         } catch (e) {
             console.error("Failed to parse active plan:", e)
         }
     }, [])
+
+    // fetching the completions for the display
+    async function fetchCompletions(planId: string) {
+        const { data: sessionData } = await supabase.auth.getSession()
+        const token = sessionData.session?.access_token
+        if (!token) return
+
+        try {
+            const res = await fetch(`${API_BASE}/api/practice-plan/completions/${planId}`, {
+                headers: {Authorization: `Bearer ${token}`}
+            })
+            const completions = await res.json()
+            const keys = completions.map((c: any) => `${c.day_name}-${c.task_index}`)
+            setCompletedTasks(new Set(keys))
+        } catch (e) {
+            console.error("Failed to fetch completions:", e)
+        }
+    }
+
+    // task completion function
+    async function toggleTaskCompletion(taskIndex: number, task: Task){
+        const { data: sessionData } = await supabase.auth.getSession()
+        const token = sessionData.session?.access_token
+        if (!token || !planId) return
+
+        const dayName = getTodayName()
+        const key = `${dayName}-${taskIndex}`
+        const isCompleted = completedTasks.has(key)
+
+        try {
+            if (isCompleted){
+                // uncomplete
+                await fetch(`${API_BASE}/api/practice-plan/complete-task?plan_id=${planId}&day_name=${dayName}&task_index=${taskIndex}`, {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}`}
+                })
+
+                setCompletedTasks(prev => {
+                    const next = new Set(prev)
+                    next.delete(key)
+                    return next
+                })
+            } else {
+                // Complete
+                await fetch(`${API_BASE}/api/practice-plan/complete-task`, {
+                    method: "POST",
+                    headers: { 
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        plan_id: planId,
+                        day_name: dayName,
+                        task_index: taskIndex,
+                        task_title: task.title,
+                        technique: task.technique || null,
+                        duration_minutes: task.duration_minutes
+                    })
+                })
+                setCompletedTasks(prev => new Set(prev).add(key))
+            }
+        } catch (e) {
+            console.error("Failed to toggle task:", e)
+        }
+    }
 
     async function connectSpotify() {
         const { data: sessionData } = await supabase.auth.getSession()
@@ -237,16 +313,32 @@ function Dashboard() {
                                         {planInfo.song} — <span style={{ fontWeight: 400, color: "#666" }}>{planInfo.artist}</span>
                                     </p>
                                 )}
-                                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                                    {todayTasks.map((task, i) => (
-                                        <div key={i} style={{ borderBottom: "1px solid #eee", paddingBottom: 10 }}>
-                                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                                                <span style={{ fontSize: 13, fontWeight: 600, color: "#222" }}>{task.title}</span>
-                                                <span style={{ fontSize: 12, color: "#999", whiteSpace: "nowrap" }}>{task.duration_minutes} min</span>
+                                <div className="task-list">
+                                    {todayTasks.map((task, i) => {
+                                        const key = `${getTodayName()}-${i}`
+                                        const isCompleted = completedTasks.has(key)
+                                        return (
+                                            <div key={i} className={`task-row ${isCompleted ? "task-row--completed" : ""}`}>
+                                                <input
+                                                    type="checkbox"
+                                                    className="task-checkbox"
+                                                    checked={isCompleted}
+                                                    onChange={() => toggleTaskCompletion(i, task)}
+                                                />
+                                                <div className="task-content">
+                                                    <div className="task-header">
+                                                        <span className={`task-title ${isCompleted ? "task-title--completed" : ""}`}>
+                                                            {task.title}
+                                                        </span>
+                                                        <span className="task-duration">{task.duration_minutes} min</span>
+                                                    </div>
+                                                    <p className={`task-instructions ${isCompleted ? "task-instructions--completed" : ""}`}>
+                                                        {task.instructions}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <p style={{ margin: 0, fontSize: 13, color: "#555", lineHeight: 1.5 }}>{task.instructions}</p>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
                                 <a href="/practice-plans" style={{ display: "block", marginTop: 14, fontSize: 13, color: "#B57F50", fontWeight: 600 }}>
                                     View full plan →
