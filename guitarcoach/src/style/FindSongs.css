@@ -99,6 +99,13 @@
     flex-wrap: wrap;
 }
 
+.fs-hint {
+    font-size: 0.65rem;
+    color:#888;
+    margin: 0;
+    font-style: italic;
+}
+
 .fs-time-btn {
     padding: 7px 18px;
     border: 1.5px solid #ccc;

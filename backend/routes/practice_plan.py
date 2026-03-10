@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from openai import OpenAI
 
-from backend.supabase_client import supabase
+from supabase_client import supabase
 
 router = APIRouter()
 client = OpenAI()
@@ -211,3 +211,139 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
         raise HTTPException(status_code=500, detail="Model did not return valid JSON.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Practice plan generation failed: {e}")
+
+
+##### PROGRESS TRACKING ENDPOINTS #####
+
+# insert a task into table
+
+class CompletedTaskRequest(BaseModel):
+    plan_id: str
+    day_name: str
+    task_index: int
+    task_title: str
+    technique: Optional[str] = None
+    duration_minutes: Optional[int] = None
+
+@router.post("/api/practice-plan/complete-task")
+async def complete_task(request: Request, req: CompletedTaskRequest):
+  auth_header = request.headers.get("authorization", "")
+  token = auth_header.replace("Bearer ", "")
+
+  if not token:
+      raise HTTPException(status_code=401, detail="Not authenticated")
+
+  try:
+      user_resp = supabase.auth.get_user(token)
+      user_id = user_resp.user.id
+  except Exception:
+      raise HTTPException(status_code=401, detail="Invalid token")
+
+  try:
+      supabase.table("task_completions").insert({
+          "user_id": user_id,
+          "practice_plan_id": req.plan_id,
+          "day_name": req.day_name,
+          "task_title": req.task_title,
+          "task_index": req.task_index,
+          "technique": req.technique,
+          "duration_minutes": req.duration_minutes
+      }).execute()
+      return {"message": "Task marked as complete."}
+  except Exception as e:
+      raise HTTPException(status_code=500, detail=f"Failed to complete task: {e}")
+
+# removing a tasks from the completed
+@router.delete("/api/practice-plan/complete-task")
+async def uncomplete_task(request: Request, plan_id: str, day_name: str, task_index: int):
+  auth_header = request.headers.get("authorization", "")
+  token = auth_header.replace("Bearer ", "")
+
+  if not token:
+      raise HTTPException(status_code=401, detail="Not authenticated")
+
+  try:
+      user_resp = supabase.auth.get_user(token)
+      user_id = user_resp.user.id
+  except Exception:
+      raise HTTPException(status_code=401, detail="Invalid token")
+
+  try:
+      supabase.table("task_completions") \
+          .delete() \
+          .eq("user_id", user_id) \
+          .eq("practice_plan_id", plan_id) \
+          .eq("day_name", day_name) \
+          .eq("task_index", task_index) \
+          .execute()
+      return {"message": "Completed task deleted."}
+  except Exception as e:
+      raise HTTPException(status_code=500, detail=f"Failed to delete completed task: {e}")
+  
+#return a list of the completed-stats
+@router.get("/api/practice-plan/completions/{plan_id}")
+async def completions(request: Request, plan_id: str):
+    auth_header = request.headers.get("authorization", "")
+    token = auth_header.replace("Bearer ", "")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    try:
+        user_resp = supabase.auth.get_user(token)
+        user_id = user_resp.user.id
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    try:
+        resp = supabase.table("task_completions") \
+            .select("*") \
+            .eq("user_id", user_id) \
+            .eq("practice_plan_id", plan_id) \
+            .execute()
+        return resp.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch completions: {e}")
+  
+# returns all stats
+@router.get("/api/practice-plan/completion-stats")
+async def completion_stats(request: Request):
+    auth_header = request.headers.get("authorization", "")
+    token = auth_header.replace("Bearer ", "")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not Authenticated")
+    
+    try:
+        user_resp = supabase.auth.get_user(token)
+        user_id = user_resp.user.id
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+
+    try: 
+        resp = supabase.table("task_completions") \
+            .select("technique, duration_minutes") \
+            .eq("user_id", user_id) \
+            .execute()
+        
+        completions = resp.data
+        total_minutes = sum(c.get("duration_minutes") or 0 for c in completions)
+
+        # Group by technique
+        by_technique = {}
+        for c in completions:
+            tech = c.get("technique") or "general"
+            mins = c.get("duration_minutes") or 0
+            by_technique[tech] = by_technique.get(tech, 0) + mins
+
+        return {
+            "total_completed": len(completions),
+            "total_minutes": total_minutes,
+            "by_technique": by_technique
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch stats: {e}")
+    
+
+    

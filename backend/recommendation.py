@@ -272,19 +272,22 @@ async def search_spotify_for_song(request: Request, song_name: str, artist_name:
             if target_artist in artist or artist in target_artist:
                 matching_track = track
                 break
+        
+        if matching_track:
+            break
     
     if not matching_track:
         matching_track = tracks[0]
         print(f"Warning: No exact artist match for '{artist_name}', using first result")
     
-    album_images = track.get("album", {}).get("images", [])
+    album_images = matching_track.get("album", {}).get("images", [])
 
     # 4. return preview url and album art
     return {
         "found": True,
-        "preview_url": track.get("preview_url"),
+        "preview_url": matching_track.get("preview_url"),
         "album_image": album_images[0].get("url") if album_images else None,
-        "spotify_id": track.get("id"),
+        "spotify_id": matching_track.get("id"),
         "matched_name": matching_track.get("name"),
         "matched_artist": ", ".join([a.get("name") for a in matching_track.get("artists", [])])
     }

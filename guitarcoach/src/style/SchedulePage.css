@@ -163,3 +163,39 @@
     color: #000000;
     line-height: 1.5;
 }
+
+/* ── Schedule Checkboxes ── */
+.task-item-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.schedule-checkbox {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    margin-top: 1px;
+    accent-color: #B57F50;
+    cursor: pointer;
+}
+
+.schedule-checkbox:hover {
+    transform: scale(1.1);
+}
+
+/* Completed States */
+.task-item--completed {
+    opacity: 0.8;
+}
+
+.task-name--completed {
+    text-decoration: line-through;
+    color: #666666 !important;
+}
+
+.task-instructions--completed li {
+    text-decoration: line-through;
+    color: #6a6a6a !important;
+}

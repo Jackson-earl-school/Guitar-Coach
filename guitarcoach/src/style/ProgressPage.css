@@ -454,6 +454,54 @@
     font-weight: 500;
 }
 
+/* ── Practice stats card ── */
+.practice-stats-card {
+    text-align: center;
+    border-top: 3px solid #B57F50;
+}
+
+.stats-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 1rem;
+}
+
+.stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #B57F50;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+}
+
+.stats-hint {
+    font-size: 0.75rem;
+    color: #aaa;
+    font-style: italic;
+    margin: 0;
+}
+
 /* ── Footer ── */
 .progress-footer {
     padding: 1.5rem 2rem;
