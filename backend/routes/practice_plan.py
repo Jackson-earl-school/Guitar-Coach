@@ -25,7 +25,7 @@ Each day should follow this exact JSON format:
 {
   "song_title": "string",
   "artist": "string",
-  "skill_level": "string",
+  "skill_level": "string — difficulty of the song itself (beginner, intermediate, or advanced), not the user's level",,
   "weekly_goal": {
     "description": "string — overarching goal for the week",
     "milestones": ["string", "string", "string"]

@@ -322,7 +322,7 @@ export default function PracticePlanPage() {
                       <p className="pp-song-detail"><span className="pp-song-detail-label">Song:</span> {result.song_title}</p>
                       <p className="pp-song-detail"><span className="pp-song-detail-label">Artist:</span> {result.artist}</p>
                       <p className="pp-sidebar-skill">
-                        <span className="pp-skill-label">Skill Level:</span> {result.skill_level}
+                        <span className="pp-skill-label">Song Difficulty:</span> {result.skill_level}
                       </p>
 
                       <button
