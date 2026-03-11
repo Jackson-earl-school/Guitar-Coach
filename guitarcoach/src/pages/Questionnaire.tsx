@@ -36,7 +36,7 @@ const questions = [
     },
     {
     id: 'techniques',
-    question: 'Rate the following techniques from 1-5 (1 = not familiar, 5 = very comfortable)',
+    question: 'Rate the following techniques from 0-5 (0 = never tried, 1 = not familiar, 5 = very comfortable)',
     options: ['Palm muting', 'Hammer-ons', 'Pull-offs', 'Slides', 'Bends', 'Vibrato', 'Tapping'],
     type: 'input'
     },
@@ -283,7 +283,7 @@ function QuestionnairePage () {
                             <div className="input-row" key={option}>
                                 <span className="input-label">{option}</span>
                                 <div className="input-buttons">
-                                    {[1, 2, 3, 4, 5].map(num => (
+                                    {[0, 1, 2, 3, 4, 5].map(num => (
                                         <button
                                         key={num}
                                         className={`input-btn ${inputs[option] === num ? 'selected' : ''}`}

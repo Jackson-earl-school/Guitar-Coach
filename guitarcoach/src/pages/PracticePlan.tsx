@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
+import { href, Link } from "react-router-dom"
 import { supabase } from "../supabaseClient"
-import "../style/FindSongs.css"
+import "bootstrap/dist/css/bootstrap.min.css"
 import "../style/PracticePlan.css"
 
 type Task = {
@@ -201,41 +202,43 @@ export default function PracticePlanPage() {
     : false
 
   return (
-    <div className="dashboard-page">
-      {/* header */}
-      <header className="dashboard-header">
-        <div className="container">
-          <div className="logo" onClick={() => { window.location.href = "/dashboard" }}>
-            GuitarCoach
-          </div>
-          <nav className="navbar">
-            <ul className="navbar-list">
-              <li><a href="/dashboard">Coach</a></li>
-              <li><a href="/find-songs">Find Songs</a></li>
-              <li><a href="/">Tasks</a></li>
-              <li>
-                <button onClick={() => { window.location.href = "/profile" }} className="profile-button">
-                  Profile
-                </button>
-              </li>
+    <div className="practice-plan-page">
+      {/* Navbar */}
+      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+        <div className="container-fluid">
+          <Link className="navbar-brand" to="/dashboard">GuitarCoach</Link>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ms-auto">
+              <li className="nav-item"><Link className="nav-link" to="/dashboard">Dashboard</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/profile">Profile</Link></li>
             </ul>
-          </nav>
+          </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="find-songs-main">
-        <h1 className="page-title">Practice Plan</h1>
+      {/* Hero section */}
+      <section className="pp-hero">
+        <div className="pp-hero-content">
+          <p className="pp-eyebrow">Practice Plan</p>
+          <h1 className="pp-title">Build Your Weekly Practice</h1>
+          <p className="pp-sub">Generate a personalized practice plan for any song you want to learn.</p>
+        </div>
+      </section>
 
+      <main className="pp-main">
         {/* tabs */}
-        <div className="time-range-selector" style={{ marginBottom: 25 }}>
+        <div className="pp-tabs">
           <button
-            className={activeTab === "generate" ? "active" : ""}
+            className={`pp-tab-btn ${activeTab === "generate" ? "active" : ""}`}
             onClick={() => setActiveTab("generate")}
           >
             Generate
           </button>
           <button
-            className={activeTab === "saved" ? "active" : ""}
+            className={`pp-tab-btn ${activeTab === "saved" ? "active" : ""}`}
             onClick={() => setActiveTab("saved")}
           >
             Saved Plans {savedPlans.length > 0 && `(${savedPlans.length})`}
@@ -259,13 +262,13 @@ export default function PracticePlanPage() {
                 onChange={(e) => setArtist(e.target.value)}
               />
               <button
-                className="generate-btn"
+                className="pp-generate-btn"
                 disabled={!canGenerate}
                 onClick={generatePlan}
               >
                 {loading ? "Generating..." : "Generate Plan"}
               </button>
-              {error && <p className="error pp-error">{error}</p>}
+              {error && <p className="pp-error-msg">{error}</p>}
             </div>
 
             {/* loading spinner */}
@@ -278,7 +281,8 @@ export default function PracticePlanPage() {
 
             {/* empty state */}
             {!result && !loading && (
-              <div className="empty-recommendation">
+              <div className="pp-empty">
+                <div className="pp-empty-icon">🎸</div>
                 <p>Enter a song and artist above to generate your personalized weekly practice plan!</p>
               </div>
             )}
@@ -369,25 +373,26 @@ export default function PracticePlanPage() {
         {/* saved plans tab */}
         {activeTab === "saved" && (
           <div>
-            {savedPlansLoading && <p className="loading">Loading saved plans...</p>}
+            {savedPlansLoading && <p className="pp-loading">Loading saved plans...</p>}
             {!savedPlansLoading && savedPlans.length === 0 && (
-              <div className="empty-recommendation">
+              <div className="pp-empty">
+                <div className="pp-empty-icon">📁</div>
                 <p>No saved plans yet. Generate a plan and save it!</p>
               </div>
             )}
             {!savedPlansLoading && savedPlans.length > 0 && (
               <div className="pp-saved-list">
                 {savedPlans.map((saved) => (
-                  <div key={saved.id} className="track-item pp-saved-item">
+                  <div key={saved.id} className="pp-saved-item">
                     <div className="pp-saved-info">
-                      <span className="track-name">{saved.song_title}</span>
-                      <span className="track-artist">{saved.artist}</span>
+                      <span className="pp-saved-name">{saved.song_title}</span>
+                      <span className="pp-saved-artist">{saved.artist}</span>
                     </div>
                     <div className="pp-saved-actions">
-                      <button className="pp-load-btn" onClick={() => loadPlan(saved)}>
-                        Load
+                      <button className="pp-action-btn pp-action-load" onClick={() => {loadPlan(saved); window.location.href = '/schedule'}}>
+                        Load into My Schedule
                       </button>
-                      <button className="pp-delete-btn" onClick={() => deletePlan(saved.id)}>
+                      <button className="pp-action-btn pp-action-delete" onClick={() => deletePlan(saved.id)}>
                         Delete
                       </button>
                     </div>

@@ -1,6 +1,6 @@
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from "recharts"
 import { supabase } from "../supabaseClient"
-import { getSkillScores, getPlayerType } from "./utils/getSkillsScore"
+import { getSkillScores, getOverallLevel } from "./utils/getSkillsScore"
 import { useEffect, useState } from "react"
 
 import type { SkillScore, QuestionnaireAnswers, CompletionStats } from "./utils/getSkillsScore"
@@ -118,7 +118,7 @@ function CustomTick({ x, y, cx = 0, cy = 0, payload, chartData }: CustomTickProp
 export default function ProgressPage() {
     const [skillScores, setSkillScores] = useState<SkillScore[]>([])
     const [answers, setAnswers] = useState<QuestionnaireAnswers | null>(null)
-    const [playerType, setPlayerType] = useState<string>("")
+    const [overallLevel, setOverallLevel] = useState<{ level: string; score: number; description: string } | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [selectedSkill, setSelectedSkill] = useState<string | null>(null)
@@ -245,7 +245,7 @@ export default function ProgressPage() {
             // Calculate scores with completion boosts
             const scores = getSkillScores(questionnaireAnswers, stats || undefined)
             setSkillScores(scores)
-            setPlayerType(getPlayerType(questionnaireAnswers))
+            setOverallLevel(getOverallLevel(scores))
             setLoading(false)
         } catch (err) {
             console.error("Failed to fetch progress data:", err)
@@ -359,12 +359,15 @@ export default function ProgressPage() {
                         {/* Right — Player profile + answers */}
                         <div className="profile-section">
 
-                            {/* Player type emblem */}
-                            <div className="progress-card player-emblem-card">
-                                <div className="emblem-icon">🎸</div>
-                                <h3 className="emblem-title">{playerType}</h3>
-                                <p className="emblem-subtitle">Current Level</p>
-                            </div>
+                            {/* Overall level card */}
+                            {overallLevel && (
+                                <div className="progress-card player-emblem-card">
+                                    <div className="emblem-icon">🎸</div>
+                                    <h3 className="emblem-title">{overallLevel.level}</h3>
+                                    <p className="emblem-score">{overallLevel.score}% Overall</p>
+                                    <p className="emblem-description">{overallLevel.description}</p>
+                                </div>
+                            )}
 
                             {/* Practice stats */}
                             {completionStats && completionStats.total_completed > 0 && (
@@ -393,7 +396,7 @@ export default function ProgressPage() {
                                     <div className="answers-list">
                                         {answers.techniques && Object.keys(answers.techniques).length > 0 && (
                                             <div className="answer-group">
-                                                <span className="answer-group-label">Technique Ratings (1–5)</span>
+                                                <span className="answer-group-label">Technique Ratings (0-5)</span>
                                                 <div className="technique-sliders">
                                                     {Object.entries(answers.techniques).map(([tech, rating]) => (
                                                         <div key={tech} className="technique-item">
