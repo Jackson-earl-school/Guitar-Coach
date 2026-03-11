@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../supabaseClient"
+import "bootstrap/dist/css/bootstrap.min.css"
 import "../style/SchedulePage.css"
 import { Link } from 'react-router-dom'
 
@@ -115,29 +116,32 @@ function SchedulePage() {
 
     return (
         <div className="schedule-page">
-            <header className="dashboard-header">
-                <div className="container">
-                    <div className="logo" onClick={() => { window.location.href = '/dashboard' }}>
-                        GuitarCoach
-                    </div>
-                    <nav className='navbar'>
-                        <ul className='navbar-list'>
-                            <li><a href='/practice-plans'>Coach</a></li>
-                            <li><a href='/find-songs'>Find Songs</a></li>
-                            <li><a href='/schedule'>Tasks</a></li>
-                            <li>
-                                <button onClick={() => { window.location.href = '/profile' }} className="profile-button">
-                                    Profile
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
+            <nav className="navbar navbar-expand-lg bg-body-tertiary">
+                <div className="container-fluid">
+                <Link className="navbar-brand" to="/dashboard">GuitarCoach</Link>
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav ms-auto">
+                    <li className="nav-item"><Link className="nav-link" to="/dashboard">Dashboard</Link></li>
+                    <li className="nav-item"><Link className="nav-link" to="/profile">Profile</Link></li>
+                    </ul>
                 </div>
-            </header>
+                </div>
+            </nav>
+            {/* Hero section */}                                                                                                                                                                                     
+            <section className="schedule-hero">                                                                                                                                                                      
+                <div className="schedule-hero-content">                                                                                                                                                              
+                    <p className="schedule-eyebrow">Weekly Schedule</p>                                                                                                                                              
+                    <h1 className="schedule-title">Your Practice Plan</h1>                                                                                                                                           
+                    <p className="schedule-sub">                                                                                                                                                                     
+                        Check the box to mark tasks as completed. See your profile grow as you complete more songs!                                                                                                  
+                    </p>                                                                                                                                                                                             
+                </div>                                                                                                                                                                                               
+            </section>
 
-            <div className="schedule-container">
-                <h1 className="schedule-title">Weekly Schedule</h1>
-
+            <main className="schedule-main">
                 {plan && (
                     <p className="schedule-plan-info">
                         {plan.song_title} — {plan.artist}
@@ -189,15 +193,7 @@ function SchedulePage() {
                         )
                     })}
                 </div>
-            </div>
-
-            <footer className="schedule-footer">
-                <div className="footer-container">
-                    <div className="footer-section">
-                        <Link to="/" className='logo'>GuitarCoach</Link>
-                    </div>
-                </div>
-            </footer>
+            </main>
         </div>
     )
 }

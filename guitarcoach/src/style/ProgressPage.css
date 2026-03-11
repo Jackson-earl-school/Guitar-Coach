@@ -248,6 +248,21 @@
     letter-spacing: 0.08em;
 }
 
+.emblem-score {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #B57F50;
+    margin: 0.25rem 0 0.5rem 0;
+}
+
+.emblem-description {
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 240px;
+}
+
 /* ── Answers ── */
 .answers-list {
     display: flex;

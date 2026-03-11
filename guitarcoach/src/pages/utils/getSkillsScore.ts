@@ -243,6 +243,85 @@ export function getPlayerType(answers: QuestionnaireAnswers) : string {
     return 'Just Starting Out'
 }
 
+// ─── Overall Player Level ────────────────────────────────────────────────────
+
+// Weights for each skill (should sum to 1.0)
+// Higher weights = more important for determining overall level
+const SKILL_WEIGHTS: Record<string, number> = {
+    'Technical Skill':  0.20,   // Core guitar ability
+    'Chord Fluency':    0.18,   // Fundamental skill
+    'Experience':       0.15,   // Time invested
+    'Rhythm & Feel':    0.15,   // Musical feel
+    'Theory':           0.10,   // Knowledge (less critical for playing)
+    'Goal Orientation': 0.07,   // Motivation (least weight on actual ability)
+    'Lead & Soloing':   0.15,   // Advanced playing
+}
+
+// Calculate overall score from all skills (0-1)
+export function getOverallScore(skillScores: SkillScore[]): number {
+    let weightedSum = 0
+    let totalWeight = 0
+
+    for (const score of skillScores) {
+        const weight = SKILL_WEIGHTS[score.axis] ?? 0.1
+        weightedSum += score.value * weight
+        totalWeight += weight
+    }
+
+    return totalWeight > 0 ? weightedSum / totalWeight : 0
+}
+
+// Get overall player level based on all skills
+export function getOverallLevel(skillScores: SkillScore[]): {
+    level: string
+    score: number
+    description: string
+} {
+    const score = getOverallScore(skillScores)
+    const percentage = Math.round(score * 100)
+
+    if (score >= 0.85) {
+        return {
+            level: 'Advanced',
+            score: percentage,
+            description: 'You have mastered the fundamentals and are developing advanced techniques.'
+        }
+    }
+    if (score >= 0.70) {
+        return {
+            level: 'Intermediate-Advanced',
+            score: percentage,
+            description: 'Strong skills across the board with room to polish advanced techniques.'
+        }
+    }
+    if (score >= 0.55) {
+        return {
+            level: 'Intermediate',
+            score: percentage,
+            description: 'Solid foundation with good overall ability. Keep practicing to advance further.'
+        }
+    }
+    if (score >= 0.40) {
+        return {
+            level: 'Beginner-Intermediate',
+            score: percentage,
+            description: 'Building a good foundation. Focus on your weaker areas to level up.'
+        }
+    }
+    if (score >= 0.25) {
+        return {
+            level: 'Beginner',
+            score: percentage,
+            description: 'Learning the basics. Consistent practice will show quick improvements.'
+        }
+    }
+    return {
+        level: 'Just Starting',
+        score: percentage,
+        description: 'Welcome to guitar! Focus on basic chords and strumming patterns.'
+    }
+}
+
 
 export function getSkillScores(
     answers: QuestionnaireAnswers,

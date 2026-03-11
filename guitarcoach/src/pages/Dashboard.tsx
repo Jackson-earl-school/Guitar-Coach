@@ -26,7 +26,7 @@ type PracticePlan = {
   days: { day: string; tasks: Task[] }[]
 }
 
-type CompletionKey = string
+// type CompletionKey = string
 
 function getTodayName() {
   return new Date().toLocaleDateString("en-US", { weekday: "long" })
@@ -340,7 +340,7 @@ function Dashboard() {
                                         )
                                     })}
                                 </div>
-                                <a href="/practice-plans" style={{ display: "block", marginTop: 14, fontSize: 13, color: "#B57F50", fontWeight: 600 }}>
+                                <a href="/schedule" style={{ display: "block", marginTop: 14, fontSize: 13, color: "#B57F50", fontWeight: 600 }}>
                                     View full plan →
                                 </a>
                             </div>
