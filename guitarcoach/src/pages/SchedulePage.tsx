@@ -23,7 +23,6 @@ type PracticePlan = {
     days: Day[]
 }
 
-const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 function SchedulePage() {
     const [plan, setPlan] = useState<PracticePlan | null>(null)
@@ -152,7 +151,7 @@ function SchedulePage() {
                 )}
 
                 <div className="schedule-grid">
-                    {DAYS.map((dayName) => {
+                    {(plan ? plan.days.map(d => d.day) : []).map((dayName) => {
                         const tasks = getTasksForDay(dayName)
                         return (
                             <div key={dayName} className="day-column">

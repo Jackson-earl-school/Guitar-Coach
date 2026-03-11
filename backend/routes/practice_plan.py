@@ -1,11 +1,12 @@
 import json
 from typing import Optional, Literal, Dict, Any
+from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from openai import OpenAI
 
-from supabase_client import supabase
+from backend.supabase_client import supabase
 
 router = APIRouter()
 client = OpenAI()
@@ -25,7 +26,7 @@ Each day should follow this exact JSON format:
 {
   "song_title": "string",
   "artist": "string",
-  "skill_level": "string — difficulty of the song itself (beginner, intermediate, or advanced), not the user's level",,
+  "skill_level": "string — difficulty of the song itself (beginner, intermediate, or advanced), not the user's level",
   "weekly_goal": {
     "description": "string — overarching goal for the week",
     "milestones": ["string", "string", "string"]
@@ -49,6 +50,7 @@ Each day should follow this exact JSON format:
 }
 
 Rules:
+- The week starts on the day specified in "start_day" and runs for 7 consecutive days (1 week).
 - Distribute tasks so total duration per day matches the user's minutes_per_day.
 - Make every task specific to the song and skill level.
 - Milestones must be concrete and measurable.
@@ -191,6 +193,7 @@ async def practice_plan(req: PracticePlanRequest, request: Request):
         "techniques": answers.get("techniques", {}),
         "technical_skills": answers.get("technical skills", []),
         "goal": answers.get("goal", ""),
+        "start_day": datetime.now().strftime("%A"),
     }
 
     try:
