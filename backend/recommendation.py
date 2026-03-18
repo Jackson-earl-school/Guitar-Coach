@@ -30,13 +30,48 @@ class SimilarRequest(BaseModel):
 # main endpooint
 @router.post("/generate-song")
 async def generate_recommendation(request: Request, body: RecommendationRequest):
-    # 1. Auth check 
+    # 1. Auth check
     auth_header = request.headers.get("authorization", "")
     token = auth_header.replace("Bearer ", "")
 
     if not token:
         raise HTTPException(status_code=401, detail="Not Authenticate")
-    
+
+    # 1.5 Fetch user profile for skill context
+    try:
+        user_resp = supabase.auth.get_user(token)
+        user_id = user_resp.user.id
+        profile = (
+            supabase.table("profiles")
+            .select("questionnaire_answers")
+            .eq("id", user_id)
+            .single()
+            .execute()
+        )
+        answers = profile.data.get("questionnaire_answers") or {}
+    except Exception:
+        answers = {}
+
+    # Extract skill information from questionnaire
+    technical_skills = answers.get("technical skills", [])
+    techniques = answers.get("techniques", {})
+    experience_level = answers.get("experience", "")
+    goal = answers.get("goal", "")
+
+    # Build skill context string
+    skill_context = ""
+    if experience_level:
+        skill_context += f"\nStudent's overall experience level: {experience_level}"
+    if technical_skills:
+        skill_context += f"\nTechnical skills the student already knows: {', '.join(technical_skills)}"
+    if techniques:
+        # techniques is a dict with skill names as keys
+        known_techniques = [k for k, v in techniques.items() if v]
+        if known_techniques:
+            skill_context += f"\nTechniques the student is familiar with: {', '.join(known_techniques)}"
+    if goal:
+        skill_context += f"\nStudent's learning goal: {goal}"
+
     # 2. Build context strings from music data
     def format_track(track: dict) -> str:
         name = track.get('name')
@@ -48,8 +83,8 @@ async def generate_recommendation(request: Request, body: RecommendationRequest)
         genres = ', '.join(artist.get('genres', [])[:3])
         return f"- {name} (genres: {genres})"
 
-    tracks_context = "\n".join(format_track(t) for t in body.top_tracks[:10])
-    artists_context = "\n".join(format_artist(a) for a in body.top_artists[:10])
+    tracks_context = "\n".join(format_track(track) for track in body.top_tracks[:10])
+    artists_context = "\n".join(format_artist(artist) for artist in body.top_artists[:10])
 
     # 3. Handle difficulty adjustment
     target_difficulty = body.current_difficulty
@@ -70,17 +105,23 @@ async def generate_recommendation(request: Request, body: RecommendationRequest)
 
         The student's top tracks: {tracks_context}
         The student's top artists: {artists_context}
+        {skill_context}
 
         Recommend ONE guitar song. You can use the student's listening history
-        but don't solely rely on it. You can also recommend another song by the 
+        but don't solely rely on it. You can also recommend another song by the
         same artist that they enjoy but haven't heard yet.
 
-        Find a song with a difficult of {target_difficulty}/5.
+        Find a song with a difficulty of {target_difficulty}/5.
 
-        List why the song would be beneficial to learn and how it relates to 
-        their music taste and  write it in the "description" of the song. 
-        Also list all the guitar skills that they would develop while learning 
-        the song.
+        Consider the student's current skill level and technical abilities when
+        making your recommendation. If they already know certain techniques,
+        recommend songs that build on those skills or introduce new ones
+        appropriate for their level.
+
+        List why the song would be beneficial to learn and how it relates to
+        their music taste AND their current skill level. Write this in the
+        "description" of the song. Also list all the guitar skills that they
+        would develop while learning the song.
 
         Here is an example output of what I want: 
 

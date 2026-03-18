@@ -22,7 +22,6 @@ export interface CompletionStats {
     by_technique: Record<string, number>  // technique -> total minutes
 }
 
-// ─── Technique to Skill Mapping ──────────────────────────────────────────────
 // Maps technique keywords to the skill they boost
 const TECHNIQUE_SKILL_MAP: Record<string, string> = {
     'chord': 'Chord Fluency',

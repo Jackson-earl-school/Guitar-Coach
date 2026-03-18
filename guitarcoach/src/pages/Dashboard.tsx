@@ -192,7 +192,7 @@ function Dashboard() {
 
     async function connectSpotify() {
         const { data: sessionData } = await supabase.auth.getSession()
-        const token = sessionData.session?.access_token
+        const token = sessionData.session?.access_token                 // JWT token to authenticate with backend
         if (token) {
             window.location.href = `${API_BASE}/api/spotify/login?token=${token}`
         }

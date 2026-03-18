@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { href, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { supabase } from "../supabaseClient"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "../style/PracticePlan.css"
@@ -99,9 +99,6 @@ export default function PracticePlanPage() {
         setError(data?.detail ?? "Failed to generate practice plan.")
       } else {
         setResult(data)
-        localStorage.setItem("activePracticePlan", JSON.stringify(data))
-        // Note: Generated plans don't have an ID until saved
-        localStorage.removeItem("activePracticePlanId")
       }
     } catch (e: any) {
       setError(e?.message ?? "Network error.")
@@ -139,6 +136,7 @@ export default function PracticePlanPage() {
           (p: SavedPlan) => p.song_title === result.song_title && p.artist === result.artist
         )
         if (matchingPlan) {
+          localStorage.setItem("activePracticePlan", JSON.stringify(result))
           localStorage.setItem("activePracticePlanId", matchingPlan.id)
         }
       } else {
@@ -349,7 +347,7 @@ export default function PracticePlanPage() {
                         onClick={(e) => { e.stopPropagation(); savePlan() }}
                         disabled={saving || alreadySaved}
                       >
-                        {saving ? "Saving..." : alreadySaved ? "✓ Saved" : "Save Plan"}
+                        {saving ? "Saving..." : alreadySaved ? "✓ Loaded to Schedule" : "Save & Load to Schedule"}
                       </button>
 
                       <div className="pp-sidebar-divider" />

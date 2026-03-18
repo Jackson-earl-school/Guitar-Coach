@@ -34,7 +34,7 @@ async def get_valid_spotify_token(user_id: str) -> str:
 
     # Check if token is expired (with 5 minute buffer)
     if expires_at_str:
-        expires_at = datetime.fromisoformat(expires_at_str.replace("Z", "+00:00"))
+        expires_at = datetime.fromisoformat(expires_at_str.replace("Z", "+00:00"))      # python date format
         if datetime.now(timezone.utc) < expires_at - timedelta(minutes=5):
             # Token still valid
             return access_token
@@ -60,6 +60,7 @@ async def get_valid_spotify_token(user_id: str) -> str:
 
     tokens = response.json()
     new_access_token = tokens["access_token"]
+
     # Spotify may or may not return a new refresh token
     new_refresh_token = tokens.get("refresh_token", refresh_token)
     expires_in = tokens["expires_in"]
