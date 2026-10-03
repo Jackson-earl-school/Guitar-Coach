@@ -236,7 +236,7 @@ export default function ProgressPage() {
             setAnswers(questionnaireAnswers)
 
             // Parse completion stats if available
-            let stats: CompletionStats | null = null
+            let stats: CompletionStats | null = null        // { total_completed: number, total_minutes: number, by_technique: {[technique: string]: number}}
             if (statsRes.ok) {
                 stats = await statsRes.json()
                 setCompletionStats(stats)

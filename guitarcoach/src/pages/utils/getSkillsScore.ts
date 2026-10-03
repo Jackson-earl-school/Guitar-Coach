@@ -96,10 +96,10 @@ function calculateCompletionBoosts(stats: CompletionStats): Record<string, numbe
 function scoreTechnicalSkill(answers: QuestionnaireAnswers): number {
     const { technical_skills, techniques } = answers
 
-    // technical_skills: each selection = 0.2 (5 options → max 1.0)
+    // Question: "which of these can you comfortably play?"  score out of 5
     const chordScore = (technical_skills?.length ?? 0) / 5
 
-    // techniques: average of all 1–5 ratings normalized to 0–1
+    // rate the following techniques from 0-5   result = avg / 5
     const techValues = techniques ? Object.values(techniques) : []
     const techAvg = techValues.length
         ? techValues.reduce((a, b) => a + b, 0) / techValues.length / 5

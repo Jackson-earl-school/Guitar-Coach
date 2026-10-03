@@ -14,14 +14,14 @@ type Task = {
 }
 
 type Day = {
-    day: string
-    tasks: Task[]
+    day: string         // becomes dayName
+    tasks: Task[]       // array index becomes taskIndex
 }
 
 type PracticePlan = {
     song_title: string
     artist: string
-    days: Day[]
+    days: Day[]     // array of days
 }
 
 
@@ -68,7 +68,7 @@ function SchedulePage() {
         if (!token || !planId) return
 
         const key = `${dayName}-${taskIndex}`
-        const isCompleted = completedTasks.has(key)
+        const isCompleted = completedTasks.has(key)     // checks if it is already completed, if so, then delete it
 
         try {
             if (isCompleted) {
@@ -155,7 +155,7 @@ function SchedulePage() {
                 )}
 
                 <div className="schedule-grid">
-                    {(plan ? plan.days.map(d => d.day) : []).map((dayName) => {
+                    {(plan ? plan.days.map(d => d.day) : []).map((dayName) => {             // plan days = [{day: "monday", tasks: [...]}, {day: "tuesday", ...}]
                         const tasks = getTasksForDay(dayName)
                         return (
                             <div key={dayName} className="day-column">
@@ -164,17 +164,17 @@ function SchedulePage() {
                                     {tasks.length === 0 ? (
                                         <li className="task-item task-item--empty">—</li>
                                     ) : (
-                                        tasks.map((task, i) => {
-                                        const key = `${dayName}-${i}`
+                                        tasks.map((task, index) => {
+                                        const key = `${dayName}-${index}`
                                         const isCompleted = completedTasks.has(key)
                                         return (
-                                            <li key={i} className={`task-item ${isCompleted ? "task-item--completed" : ""}`}>
+                                            <li key={index} className={`task-item ${isCompleted ? "task-item--completed" : ""}`}>
                                                 <label className="task-item-label">
                                                     <input
                                                         type="checkbox"
                                                         className="schedule-checkbox"
                                                         checked={isCompleted}
-                                                        onChange={() => toggleTaskCompletion(dayName, i, task)}
+                                                        onChange={() => toggleTaskCompletion(dayName, index, task)}
                                                     />
                                                     <span className={`task-item-name ${isCompleted ? "task-name--completed" : ""}`}>
                                                         {task.title} — {task.duration_minutes} min

@@ -12,7 +12,7 @@ const questions = [
     },
     {
     id: 'learning_style',
-    question: 'Which of these can you use to learn a song? (Select all that apply)',
+    question: 'Which of these can you, or are you planning to use to learn a song? (Select all that apply)',
     options: ['I learn by ear / watching videos', 'I can follow guitar tabs', 'I can read chord charts and diagrams', 'I understand keys, scales, and music theory', 'I can read standard notation'],
     type: 'multi'
     },
@@ -61,7 +61,7 @@ const questions = [
     {
     id: 'goal',
     question: 'What best describes your current goal?',
-    options: ['Becoming an advanced player', 'Performing or recording', 'Playing confidently with others', 'Playing songs for fun', 'Just staring out'],
+    options: ['Becoming an advanced player', 'Performing or recording', 'Playing confidently with others', 'Playing songs for fun', 'Just starting out'],
     type: 'single'
     }
 ]

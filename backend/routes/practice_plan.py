@@ -330,6 +330,7 @@ async def completion_stats(request: Request):
             .eq("user_id", user_id) \
             .execute()
         
+        # calculate totals
         completions = resp.data
         total_minutes = sum(c.get("duration_minutes") or 0 for c in completions)
 
@@ -338,7 +339,7 @@ async def completion_stats(request: Request):
         for c in completions:
             tech = c.get("technique") or "general"
             mins = c.get("duration_minutes") or 0
-            by_technique[tech] = by_technique.get(tech, 0) + mins
+            by_technique[tech] = by_technique.get(tech, 0) + mins   # Result: {"chord": 45, "strum": 30, "bend": 20}
 
         return {
             "total_completed": len(completions),

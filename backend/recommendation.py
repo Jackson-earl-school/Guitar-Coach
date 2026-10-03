@@ -250,9 +250,9 @@ async def generate_similar(request: Request, body: SimilarRequest):
             content = content.strip()
 
 
-        recommentation = json.loads(content)
+        recommendation = json.loads(content)
 
-        return recommentation
+        return recommendation
     except json.JSONDecodeError as e:
         print(f"JSON parse error: {e}, content was: {content}")
         raise HTTPException(status_code=500, detail="Failed to parse AI response")
